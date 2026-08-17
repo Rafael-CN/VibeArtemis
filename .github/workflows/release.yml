@@ -1,0 +1,108 @@
+name: Release
+
+# Publica APKs assinados quando você empurra uma tag `v*`, ou manualmente.
+#
+# Assinatura: se os secrets abaixo existirem, o APK sai assinado com a sua chave.
+# Se não existirem, sai com a chave de debug do Android e a release é marcada como
+# rascunho — instalável para testar, mas sem atualizar por cima de uma versão assinada.
+# Ver docs/guides/release.md para gerar a keystore.
+#
+#   KEYSTORE_BASE64        keystore .jks em base64
+#   KEYSTORE_PASSWORD
+#   KEY_ALIAS
+#   KEY_PASSWORD
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag a publicar (ex.: v20.2.6-vibe.1)'
+        required: true
+
+permissions:
+  contents: write # necessário para criar a release
+
+jobs:
+  release:
+    name: Compilar e publicar
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Configurar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar NDK
+        run: sdkmanager --install "ndk;27.0.12077973"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Publicar algo com a fronteira JNI quebrada produz um APK que crasha em
+      # runtime sem erro de compilação. Barato de checar, caro de descobrir depois.
+      - name: Integridade da fronteira JNI
+        run: node tools/codemap/jni-check.mjs
+
+      - name: Testes unitários
+        run: ./gradlew :app:testNonRoot_gameDebugUnitTest --console=plain
+
+      - name: Preparar keystore
+        id: keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "signed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Sem KEYSTORE_BASE64 — o APK sairá com a chave de debug e a release ficará como rascunho."
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build assinado
+        if: steps.keystore.outputs.signed == 'true'
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/release.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew :app:assembleNonRoot_gameRelease --console=plain
+
+      - name: Build não assinado
+        if: steps.keystore.outputs.signed == 'false'
+        run: ./gradlew :app:assembleNonRoot_gameDebug --console=plain
+
+      - name: Reunir APKs
+        run: |
+          mkdir -p dist
+          find app/build/outputs/apk -name '*.apk' -exec cp {} dist/ \;
+          ls -la dist/
+
+      - name: Publicar release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: VibeArtemis ${{ github.event.inputs.tag || github.ref_name }}
+          draft: ${{ steps.keystore.outputs.signed == 'false' }}
+          generate_release_notes: true
+          files: dist/*.apk
+          body: |
+            APKs por ABI: `arm64-v8a` para a maioria dos aparelhos modernos,
+            `armeabi-v7a` para os antigos, `x86`/`x86_64` para emuladores.
+
+            ${{ steps.keystore.outputs.signed == 'false' && '⚠️ Build **não assinado** com chave de release (usa a chave de debug). Rascunho até configurar os secrets — ver docs/guides/release.md.' || '' }}

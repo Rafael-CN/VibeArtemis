@@ -93,6 +93,20 @@ android {
         }
     }
 
+    // Assinatura de release vinda do ambiente, para a CI não precisar de nada commitado.
+    // Sem as variáveis, o bloco não é criado e o Gradle cai na chave de debug — o APK
+    // instala para teste mas não atualiza por cima de uma versão assinada de verdade.
+    signingConfigs {
+        if (System.getenv("KEYSTORE_PATH")) {
+            release {
+                storeFile file(System.getenv("KEYSTORE_PATH"))
+                storePassword System.getenv("KEYSTORE_PASSWORD")
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix ".noirdebug"
@@ -138,6 +152,10 @@ android {
             resValue "string", "app_label", "VibeArtemis"
             resValue "string", "app_label_root", "VibeArtemis (Root)"
             resValue "string", "app_label_game", "VibeArtemis (Game)"
+
+            if (System.getenv("KEYSTORE_PATH")) {
+                signingConfig signingConfigs.release
+            }
 
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
