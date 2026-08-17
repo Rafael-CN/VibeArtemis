@@ -2227,3 +2227,55 @@ Alto para merges futuros: divergir do upstream nesses arquivos torna todo `git m
 
 ---
 
+## M97
+
+### Tratar "Remote Monitor" e "Remote Input" como funções, não como jogos
+
+**Tamanho:** medium
+
+**Subsistema:** UI, Rede — ver [referência](../reference/host-compatibility.md)
+
+> Adicionado à mão em 2026-08-17, depois de confirmar em campo que o Remote Monitor do
+> Vibeshine 1.19 funciona. Não veio da análise automática.
+
+**Por quê**
+
+O Vibeshine injeta apps sintéticos no `/applist` para expor funções de sessão: "Remote
+Monitor" (id 2147483505), "Remote Input" (2147483506), "Resume" (2147483501),
+"Disconnect Monitor" (…502), "Disconnect Input" (…503) e "Terminate" (…504). Para o
+cliente eles chegam como jogos comuns, então o Artemis os mistura na grade de box art
+junto com Steam, Desktop e o resto.
+
+Isso funciona, mas trata como jogo o que é controle de sessão. Quem usa três telas ativa
+Remote Monitor várias vezes por dia, e hoje isso significa caçar um tile no meio da
+biblioteca. Pior: depois de virar monitor, o catálogo do host muda e o dispositivo passa
+a ver só "Resume" e "Disconnect Monitor" — a grade inteira se transforma sem explicação.
+
+**Plano de implementação**
+
+Os IDs são estáveis por contrato — o próprio código do host comenta que mantém a
+identidade numérica fixa para clientes com tile em cache. Dá para reconhecê-los sem
+nenhuma negociação nova.
+
+1. Constantes em `com.limelight.nvstream.http` com os seis IDs e o UUID sintético
+   (`9a1c5a25-58fe-40e0-b9aa-7d3f0000000N`, onde N é 1–6). Reconhecer por **ambos**,
+   porque o host aceita os dois.
+2. Em `AppView`, separar os sintéticos da grade normal: uma faixa de ações no topo, com
+   ícone próprio em vez da box art vinda do host.
+3. Lembrar o último papel por host em `SharedPreferences`, e oferecer atalho direto —
+   "conectar como monitor" sem passar pela biblioteca.
+4. Suportar atalho de launcher apontando para o Remote Monitor de um host, reaproveitando
+   o `ShortcutTrampoline` que já existe.
+5. Quando o catálogo vier reduzido (só Resume/Disconnect), mostrar um estado explícito
+   "este dispositivo é um monitor remoto" em vez de uma grade quase vazia.
+
+Detectar suporte é trivial e não precisa do E03: se os IDs sintéticos aparecem no
+`/applist`, o host tem a feature.
+
+**Risco**
+
+Baixo. É apresentação; nada no caminho de streaming muda. O cuidado é não esconder um
+app real que por acaso tenha um ID nessa faixa — daí casar ID **e** UUID antes de tratar
+como sintético. Os IDs ficam logo abaixo de `INT32_MAX`, justamente para não colidir.
+
+---

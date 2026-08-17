@@ -705,15 +705,18 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 // Intermediate: more responsive than Balanced but not 0 µs
                 decoderRenderer.setPreferLowerDelays(true);
                 decoderRenderer.setPreferLowerDelaysTimeoutUs(500);  // 0.5 ms
-                prefConfig.framePacing = PreferenceConfiguration.FRAME_PACING_BALANCED;
-                LimeLog.info("PreferLowerDelays: preferLowerDelays=true, timeout=500us, pacing=BALANCED");
+                LimeLog.info("PreferLowerDelays: preferLowerDelays=true, timeout=500us");
             } else {
                 // Balanced default
                 decoderRenderer.setPreferLowerDelays(false);
                 decoderRenderer.setPreferLowerDelaysTimeoutUs(2000); // 2 ms
-                prefConfig.framePacing = PreferenceConfiguration.FRAME_PACING_BALANCED;
-                LimeLog.info("Balanced: preferLowerDelays=false, timeout=2000us, pacing=BALANCED");
+                LimeLog.info("PreferLowerDelays: preferLowerDelays=false, timeout=2000us");
             }
+            // Note: this block used to overwrite prefConfig.framePacing with BALANCED on
+            // *both* branches, which silently discarded the user's frame pacing choice —
+            // the list preference offers four modes and only the side effects of this
+            // block were reaching the decoder. The delay preference and the pacing
+            // preference are independent; leave the latter alone.
         } catch (Throwable ignored) {}
 
 // Don't stream HDR if the decoder can't support it
@@ -885,7 +888,11 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 decoderRenderer.setRenderTarget(streamContainer.getSurface());
 
                 // Starten Sie die NvConnection
-                conn.start(new AndroidAudioRenderer(Game.this, prefConfig.playHostAudio),
+                // enableAudioFx, not playHostAudio: the renderer's flag controls client-side
+                // audio effects, while playHostAudio asks the *host* to keep playing sound
+                // through its own speakers. Passing one for the other tied the client's audio
+                // processing to an unrelated host setting.
+                conn.start(new AndroidAudioRenderer(Game.this, prefConfig.enableAudioFx),
                         decoderRenderer, Game.this);
             }
         });

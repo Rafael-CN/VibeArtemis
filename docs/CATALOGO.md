@@ -25,9 +25,9 @@ análise estão marcadas — são as de maior confiança.
 | Código | Proposta | Tamanho | Subsistema |
 |---|---|---|---|
 | [**E02**](planos/EPICS.md#e02) | EPIC — Empacotar múltiplos code points por pacote UTF-8 quando o host for Sunshine/Apollo | epic | Rede, Protocolo e Descoberta de Hosts |
-| [**E03**](planos/EPICS.md#e03) | EPIC — Modelo explícito de capacidades do host (HostCapabilities) e propagação até o Game | epic | Rede, Protocolo e Descoberta de Hosts |
+| [**E03**](planos/EPICS.md#e03) | Modelo explícito de capacidades do host — **prioridade elevada**, o clipboard aparece sem funcionar no Vibeshine | epic | Rede |
 | [**E04**](planos/EPICS.md#e04) | EPIC: Camada de audio resiliente a mudancas de layout e ciclo de vida (pre-requisito da featur… | epic | Pipeline de Audio |
-| [**E05**](planos/EPICS.md#e05) | EPIC: Passagem de microfone do cliente para o host | epic | Pipeline de Audio |
+| [**E05**](planos/EPICS.md#e05) | Passagem de microfone do cliente — ⚠ **não recomendado**, o protocolo não tem canal ascendente | epic | Áudio |
 | [**E06**](planos/EPICS.md#e06) | EPIC: Extrair MediaCodecDecoderRenderer em componentes testáveis | epic | Pipeline de Vídeo e Decodificação |
 | [**E07**](planos/EPICS.md#e07) | Perfis por host e por app (resolução automática de perfil) | epic | Preferências, Configuração e Perfis |
 | [**E08**](planos/EPICS.md#e08) | EPIC — decidir explicitamente o que NÃO portar do V+ e fechar o escopo do fork | epic | Comparação Artemis |
@@ -133,6 +133,7 @@ análise estão marcadas — são as de maior confiança.
 | [**M94**](planos/MELHORIAS.md#m94) | Migrar o teclado virtual próprio para layouts orientados a dados, com AltGr e localização | large | Entrada de Teclado |
 | [**M95**](planos/MELHORIAS.md#m95) | EPIC — Camada de confianca explicita: fim do downgrade silencioso e visibilidade do estado TLS | large | Segurança, Privacidade e Robustez |
 | [**M96**](planos/MELHORIAS.md#m96) | Enxugar o fork: remover Stereo3D/IA se não for usado | large | Delta Artemis vs Moonlight upstream |
+| [**M97**](planos/MELHORIAS.md#m97) | Tratar "Remote Monitor" e "Remote Input" como funções, não como jogos | medium | UI, Rede |
 
 ## Ganhos rápidos
 

@@ -46,9 +46,27 @@ Mudança em submódulo compartilhado — precisa ser validada contra Sunshine va
 
 ### EPIC — Modelo explícito de capacidades do host (HostCapabilities) e propagação até o Game
 
-**Tamanho:** epic
+**Tamanho:** epic · **Prioridade elevada em 2026-08-17**
 
 **Subsistema:** Rede, Protocolo e Descoberta de Hosts — ver [referência](../reference/rede.md)
+
+> ## Caso concreto que justifica priorizar
+>
+> Verifiquei as rotas HTTP do Vibeshine 1.19.0-alpha.2. São exatamente as do Sunshine:
+> `/serverinfo /applist /appasset /launch /resume /cancel /pair /unpair /bitrate
+> /api/abr/capabilities`. **Não existe `/actions/clipboard`** — é extensão do Apollo.
+>
+> Resultado prático no setup do dono do fork: a sincronização de clipboard aparece na
+> interface e simplesmente não funciona. O cliente já *sabe* disso e mesmo assim oferece
+> — `NvHTTP.sendClipboard()` tem um comentário tratando "the 200ed 404 from Sunshine",
+> ou seja, a detecção existe, é feita por tentativa e erro, e o resultado é descartado
+> em vez de desabilitar o recurso.
+>
+> Este EPIC deixa de ser arrumação arquitetural e passa a ter sintoma observável: um
+> botão que mente. O mínimo entregável, antes do modelo completo, é **esconder ou
+> desabilitar com explicação** o que o host não suporta.
+>
+> Ver `docs/reference/host-compatibility.md` para a matriz por host.
 
 **Por quê**
 
@@ -88,15 +106,43 @@ Alto. Mexer no guard de `surfaceDestroyed` pode deixar a conexao viva com uma Su
 
 ## E05
 
-### EPIC: Passagem de microfone do cliente para o host
+### EPIC: Passagem de microfone (e câmera) do cliente para o host
 
-**Tamanho:** epic
+**Tamanho:** epic · **Status: NÃO RECOMENDADO — ver a verificação abaixo**
 
 **Subsistema:** Pipeline de Audio — ver [referência](../reference/audio.md)
 
-**Por quê**
+> ## ⚠ Verificação de 2026-08-17 que muda a conclusão deste EPIC
+>
+> A justificativa original afirmava que "forks do Sunshine (incluindo a linhagem
+> Apollo/Vibeshine) têm suporte a sink de microfone". **Isso foi verificado e é falso.**
+>
+> - `src/platform/macos/microphone.mm` do Vibeshine é o **oposto** do que se supôs: é o
+>   `mic_t` que captura o microfone **do host macOS** para misturar no áudio que desce
+>   para o cliente. Não é passthrough do cliente.
+> - `Limelight.h` — a API completa do protocolo — não tem **nenhuma** ocorrência de
+>   microfone, câmera ou canal de mídia ascendente. O protocolo Moonlight é
+>   **unidirecional para mídia**: vídeo e áudio descem, e só *input* (teclado, mouse,
+>   gamepad, touch, caneta) sobe.
+> - O Vibeshine 1.19.0-alpha.2 não tem contraparte nenhuma para isto.
+>
+> Ou seja: não é "o host ainda não implementou". É uma extensão de protocolo que teria
+> que existir simultaneamente em três lugares — `moonlight-common-c` (submódulo
+> compartilhado com o upstream), o host, e o cliente — e que nos deixaria incompatíveis
+> com Sunshine, Apollo e Vibeshine ao mesmo tempo.
+>
+> **Alternativa que resolve a necessidade real hoje:** usar o mic e a câmera do Android
+> como *dispositivos virtuais do Windows*, por um canal independente do Moonlight —
+> DroidCam, Iriun ou Camo. O PC enxerga uma webcam e um microfone comuns, funciona em
+> qualquer aplicativo, e roda em paralelo ao Remote Monitor sem conflito, porque são
+> caminhos separados.
+>
+> Só reabrir este EPIC se o `moonlight-common-c` upstream adotar um canal ascendente de
+> mídia. Até lá, o custo é permanente e o benefício é obtido de graça por fora.
 
-Nao existe nenhuma captura de audio no app — grep por `AudioRecord`, `RECORD_AUDIO` e `MODIFY_AUDIO_SETTINGS` em `app/src/main/java` e no AndroidManifest.xml nao retorna nada. Forks do Sunshine (incluindo a linhagem Apollo/Vibeshine que o dono do fork usa) tem suporte a sink de microfone. Para um cliente que ja mira uso tipo desktop remoto (teclado, texto), voz e o proximo degrau natural.
+**Por quê (justificativa original, mantida para contexto)**
+
+Nao existe nenhuma captura de audio no app — grep por `AudioRecord`, `RECORD_AUDIO` e `MODIFY_AUDIO_SETTINGS` em `app/src/main/java` e no AndroidManifest.xml nao retorna nada. Para um cliente que ja mira uso tipo desktop remoto (teclado, texto), voz e o proximo degrau natural.
 
 **Plano de implementação**
 

@@ -753,7 +753,20 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer implements C
         adaptivePlayback = MediaCodecHelper.decoderSupportsAdaptivePlayback(selectedDecoderInfo, mimeType);
         fusedIdrFrame = MediaCodecHelper.decoderSupportsFusedIdrFrame(selectedDecoderInfo, mimeType);
 
+        // The loop below relies on setDecoderLowLatencyOptions() eventually reporting that
+        // it has no further options to try. A vendor block that forgets its tryNumber guard
+        // breaks that contract and hangs the app at connection time with no error — which
+        // has happened, on NVIDIA and MediaTek decoders. This bound makes the failure mode
+        // a clean error instead of a hang, whatever a future vendor block does.
+        final int MAX_DECODER_CONFIG_TRIES = 16;
+
         for (int tryNumber = 0;; tryNumber++) {
+            if (tryNumber >= MAX_DECODER_CONFIG_TRIES) {
+                LimeLog.severe("Decoder configuration did not converge after " +
+                        MAX_DECODER_CONFIG_TRIES + " tries; giving up on " + selectedDecoderInfo.getName());
+                return -5;
+            }
+
             LimeLog.info("Decoder configuration try: "+tryNumber);
 
             MediaFormat mediaFormat = createBaseMediaFormat(mimeType);

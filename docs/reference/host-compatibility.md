@@ -70,17 +70,51 @@ Ou seja: **o próprio código documenta que clipboard não funciona com Sunshine
 |---|:--:|:--:|:--:|:--:|
 | Streaming, pareamento, entrada básica | ✅ | ✅ | ✅ | ✅ |
 | Resolução e bitrate customizados | ✅ | ✅ | ✅ | ✅ |
-| `sendUtf8Text` (texto Unicode) | ⚠ com 50 ms de penalidade | ✅ | ✅ provável | ✅ |
-| Virtual display | ❌ | ❌ | ⚠ tem o próprio mecanismo | ✅ |
+| `sendUtf8Text` (texto Unicode) | ⚠ com 50 ms de penalidade | ✅ | ✅ | ✅ |
+| Virtual display | ❌ | ❌ | ✅ mecanismo próprio | ✅ |
+| **Remote Monitor** (multi-tela concorrente) | ❌ | ❌ | ✅ **1.19.0-alpha.1+** | ❌ |
 | Server commands | ❌ | ❌ | ❌ | ✅ |
-| Clipboard sync (`actions/clipboard`) | ❌ | ❌ | ❓ **não verificado** | ✅ |
-| Modelo de permissões | ❌ | ❌ | ❓ | ✅ |
-| Controle de display externo | ❌ | ❌ | ❓ | ✅ |
+| Clipboard sync (`actions/clipboard`) | ❌ | ❌ | ❌ **verificado** | ✅ |
+| Modelo de permissões | ❌ | ❌ | ❌ | ✅ |
+| Mic/câmera do cliente → host | ❌ | ❌ | ❌ | ❌ |
 
-Legenda: ✅ funciona · ⚠ funciona com ressalva · ❌ não existe · ❓ não verificado.
+Legenda: ✅ funciona · ⚠ funciona com ressalva · ❌ não existe.
 
-**As colunas de Vibeshine marcadas com ❓ precisam ser testadas.** Nenhuma delas foi
-confirmada — não há como saber pelo código do cliente.
+### Verificação de 2026-08-17 (Vibeshine 1.19.0-alpha.2)
+
+Rotas HTTP expostas pelo Vibeshine, lidas de `src/nvhttp.cpp`:
+
+```
+/serverinfo  /applist  /appasset  /launch  /resume  /cancel
+/pair  /unpair  /bitrate  /api/abr/capabilities
+```
+
+**Não há `/actions/clipboard`.** Clipboard sync é extensão do Apollo, e no Vibeshine o
+recurso aparece na interface sem funcionar — ver o EPIC E03.
+
+**Mic e câmera do cliente não são suportados por host nenhum**, e não é limitação de
+implementação: `Limelight.h` não tem canal de mídia ascendente. O protocolo é
+unidirecional para mídia; só input sobe. Ver E05 para a análise e a alternativa.
+
+### Remote Monitor — a exceção que inverte a matriz
+
+O Vibeshine 1.19.0 adicionou algo que o Apollo **não** tem: até 4 clientes Moonlight
+conectados como monitores independentes, cada um com resolução e taxa próprias,
+posicionados por âncora (acima/abaixo/esquerda/direita de um monitor físico ou de outro
+cliente), com um deles marcável como primário.
+
+O mecanismo é elegante e não exige cliente especial: o host injeta **apps sintéticos** no
+`/applist` — "Remote Monitor" (id 2147483505) e "Remote Input" (id 2147483506), além de
+Resume/Terminate/Disconnect — cada um com box art própria. Do ponto de vista do cliente
+são jogos comuns. Fonte: `src/remote_session.cpp` e `src/remote_display_topology.h`.
+
+**Consequência para o planejamento:** migrar para o Apollo em busca de clipboard custaria
+o Remote Monitor, que é a feature de maior valor para o dono do fork. A recomendação
+inverteu — vale ficar no Vibeshine e pedir o endpoint de clipboard ao autor.
+
+Oportunidade para o cliente: o Artemis lista "Remote Monitor" como mais um tile de jogo.
+Dar tratamento próprio a esses IDs sintéticos (ícone, atalho, lembrar o papel por
+dispositivo) é trabalho de cliente puro, sem depender de ninguém.
 
 ### Sobre o setup atual do dono
 

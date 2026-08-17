@@ -21,9 +21,9 @@
    "code": "E02"
   },
   {
-   "title": "EPIC — Modelo explícito de capacidades do host (HostCapabilities) e propagação até o Game",
+   "title": "Modelo explicito de capacidades do host (prioridade elevada)",
    "size": "epic",
-   "rationale": "Hoje a distinção Apollo/Vibeshine vs Sunshine vanilla vs GFE está espalhada por heurísticas frágeis (NvHTTP.java:444 MJOLNIR, :664-676 ExternalPort, :550-570 VirtualDisplay*/ServerCommand, Limelight-internal.h:86 IS_SUNSHINE) e o clipboard sequer é detectado — é tentativa e erro (NvHTTP.java:931-936). Toda feature nova dependente do Apollo (injeção de texto, clipboard, file transfer, comandos de servidor) pagará esse custo de novo.",
+   "rationale": "O Vibeshine nao expoe /actions/clipboard — verificado nas rotas do host. Resultado: a sincronizacao de clipboard aparece na interface e nao funciona. O cliente ja detecta isso por tentativa e erro e descarta o resultado em vez de desabilitar o recurso. Deixa de ser arrumacao arquitetural e passa a ter sintoma observavel: um botao que mente.",
    "approach": "Criar com.limelight.nvstream.http.HostCapabilities preenchida em NvHTTP.getComputerDetails(String) (NvHTTP.java:401-450) a partir do serverinfo: isNvidia (state contém MJOLNIR), isSunshineFamily (appversion quad[3] < 0, mesma regra do nativo), isApollo (presença de Permission/VirtualDisplayCapable/ServerCommand), permissionMask e flags derivadas (clipboardSet 0x10000, clipboardRead 0x20000, serverCmd 0x100000, conforme o comentário em ComputerDetails.java:173-204). Armazenar em ComputerDetails, persistir como cache no SQLite (ComputerDatabaseManager.java:110-139), propagar em ServerHelper.createStartIntent (ServerHelper.java:93-138) e consumir em GameMenu (GameMenu.java:288-305) para habilitar/desabilitar itens em vez de mostrar toasts de erro depois.",
    "risk": "Mudança de schema do banco (precisa de migração ou de coluna nova tolerante a null). Requer alinhamento com o significado real dos bits de permissão do Apollo — o comentário em ComputerDetails.java:173-204 é a única fonte e pode envelhecer se o Apollo mudar o enum.",
    "subsystem": "Rede, Protocolo e Descoberta de Hosts (nvstream/http, nvstream/mdns, nvstream/wol, computers/, discovery/, NvConnection)",
@@ -61,9 +61,9 @@
    "code": "E04"
   },
   {
-   "title": "EPIC: Passagem de microfone do cliente para o host",
+   "title": "Passagem de microfone do cliente para o host — NAO RECOMENDADO",
    "size": "epic",
-   "rationale": "Nao existe nenhuma captura de audio no app — grep por `AudioRecord`, `RECORD_AUDIO` e `MODIFY_AUDIO_SETTINGS` em `app/src/main/java` e no AndroidManifest.xml nao retorna nada. Forks do Sunshine (incluindo a linhagem Apollo/Vibeshine que o dono do fork usa) tem suporte a sink de microfone. Para um cliente que ja mira uso tipo desktop remoto (teclado, texto), voz e o proximo degrau natural.",
+   "rationale": "Verificado em 2026-08-17: o protocolo Moonlight nao tem canal de midia ascendente. Limelight.h nao menciona microfone nem camera, e o microphone.mm do Vibeshine captura o mic do HOST, nao do cliente. Exigiria estender o protocolo em tres lugares ao mesmo tempo e nos deixaria incompativeis com Sunshine, Apollo e Vibeshine. Alternativa que resolve hoje: DroidCam/Iriun/Camo, que expoem o mic e a camera do Android como dispositivos virtuais do Windows, por fora do Moonlight e sem conflito com o Remote Monitor.",
    "approach": "Requer trabalho dos dois lados. Cliente: permissao RECORD_AUDIO, um `AudioRecord` a 48 kHz mono, encoder Opus (a libopus embarcada e decoder-only no uso atual, mas a .a completa normalmente inclui o encoder — verificar simbolos em `libopus/*/libopus.a` antes de assumir), e um novo canal de envio. Transporte: nao existe canal de audio ascendente no protocolo Moonlight atual — `Limelight-internal.h:56-67` lista os canais ENet (generic, urgent, keyboard, mouse, pen, touch, UTF8, serverctl, gamepad, sensor) e nenhum e para audio. Seria preciso um canal novo negociado por feature flag com o host, ou um socket RTP dedicado. Comecar validando o que o Vibeshine/Apollo ja expoe do lado host antes de escrever qualquer linha no cliente.",
    "risk": "Muito alto. Envolve mudanca de protocolo (divergencia do moonlight-common-c upstream, com custo de manutencao permanente), permissao sensivel de privacidade (RECORD_AUDIO exige justificativa em lojas de app), verificacao de que o encoder Opus esta presente na .a prebuilt, e um caminho de latencia totalmente novo. So justificavel se o host ja tiver a contraparte pronta.",
    "subsystem": "Pipeline de Audio (AndroidAudioRenderer + MoonBridge JNI + moonlight-common-c AudioStream/RtpAudioQueue + libopus)",
@@ -2085,6 +2085,21 @@
    "done": null,
    "confirmations": 1,
    "code": "M96"
+  },
+  {
+   "code": "M97",
+   "size": "medium",
+   "confirmations": 1,
+   "title": "Tratar \"Remote Monitor\" e \"Remote Input\" como funcoes, nao como jogos",
+   "rationale": "O Vibeshine injeta apps sinteticos no catalogo para expor funcoes de sessao, e o Artemis os mistura na grade de box art junto com os jogos. Quem usa multiplas telas ativa o Remote Monitor varias vezes por dia e precisa cacar um tile no meio da biblioteca. Depois de virar monitor, o catalogo do host muda e a grade se transforma sem explicacao.",
+   "approach": "Reconhecer os IDs sinteticos (2147483501-506) e dar tratamento proprio em AppView.",
+   "risk": "Baixo — e apresentacao, nada no caminho de streaming muda.",
+   "subsystems": [
+    "UI, Recursos e Internacionalização"
+   ],
+   "refs": [
+    "host-compatibility"
+   ]
   }
  ],
  "quick": [
