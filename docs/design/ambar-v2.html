@@ -1,0 +1,519 @@
+<title>Âmbar v2 — Sistema</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --page: oklch(96% 0.006 60); --ink: oklch(22% 0.014 55);
+    --soft: oklch(46% 0.014 55); --faint: oklch(62% 0.012 55); --line: oklch(88% 0.008 60);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: oklch(13% 0.010 55); --ink: oklch(93% 0.008 60);
+      --soft: oklch(70% 0.014 58); --faint: oklch(56% 0.014 58); --line: oklch(26% 0.014 55);
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: oklch(13% 0.010 55); --ink: oklch(93% 0.008 60);
+    --soft: oklch(70% 0.014 58); --faint: oklch(56% 0.014 58); --line: oklch(26% 0.014 55);
+  }
+  *,*::before,*::after { box-sizing: border-box; }
+  body {
+    margin:0; background:var(--page); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:15px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .wrap { max-width:1180px; margin:0 auto; padding:0 26px; }
+  header { padding:56px 0 30px; max-width:720px; }
+  .eyebrow { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--faint); font-weight:620; }
+  h1 { margin:12px 0 14px; font-size:clamp(28px,4.4vw,42px); line-height:1.06; letter-spacing:-.035em; font-weight:700; }
+  .lede { font-size:16.5px; color:var(--soft); margin:0; }
+  h2 { font-size:12px; letter-spacing:.11em; text-transform:uppercase; color:var(--faint); font-weight:640; margin:0 0 6px; }
+  .sec { padding:34px 0 10px; border-top:1px solid var(--line); margin-top:34px; }
+  .sec-t { font-size:20px; font-weight:660; letter-spacing:-.02em; margin:0 0 8px; }
+  .sec-d { color:var(--soft); font-size:14.5px; max-width:64ch; margin:0 0 22px; }
+  .strip { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
+  .sw { display:flex; flex-direction:column; gap:8px; }
+  .cap { font-size:11.5px; color:var(--faint); letter-spacing:.04em; }
+
+  /* ═══ SISTEMA ÂMBAR ═══ */
+  .phone {
+    --void:#0C0908; --raise:#191510; --edge:#241E17; --edge2:#332A20;
+    --glow:#FF9E45; --cream:#F7EFE3; --dim:#A2937F; --mute:#6B5F51;
+    width:288px; height:614px; border-radius:29px; overflow:hidden; position:relative;
+    display:flex; flex-direction:column; background:var(--void); color:var(--cream);
+    border:1px solid var(--edge); box-shadow:0 16px 44px oklch(20% .02 55/.28);
+    /* P4: tracking e feature settings são o tratamento; a face vai embarcada no app */
+    font-family:system-ui,-apple-system,sans-serif;
+    font-feature-settings:"tnum" 1,"cv01" 1;
+  }
+  .phone::after {
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:40;
+    opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+  }
+  .st { height:27px; flex:0 0 auto; display:flex; align-items:center; justify-content:space-between;
+        padding:0 17px; font-size:10px; color:var(--mute); font-weight:600; z-index:5; }
+  .vw { flex:1; position:relative; overflow:hidden; }
+  .mono { font-family:ui-monospace,"SF Mono","Cascadia Mono",Menlo,monospace; font-variant-numeric:tabular-nums; }
+
+  .halo { position:absolute; left:50%; top:-32%; width:150%; aspect-ratio:1; transform:translateX(-50%);
+          pointer-events:none; background:radial-gradient(circle,rgba(255,158,69,.16) 0%,rgba(255,158,69,.05) 32%,transparent 62%); }
+
+  .hd { padding:5px 19px 0; position:relative; z-index:5; }
+  .mk { display:flex; align-items:center; gap:7px; }
+  .fil { width:14px; height:10px; flex:0 0 auto; }
+  .wm { font-size:10px; letter-spacing:.34em; text-transform:uppercase; font-weight:700; color:var(--glow); }
+
+  /* ═══ P3: GRAMÁTICA DO CHANFRO ═══
+     11px = ação primária (uma por tela) · 7px = secundária · nenhum = informativo.
+     A forma passa a significar interatividade, legível sem depender da cor. */
+  .cut-1 { clip-path:polygon(0 0,calc(100% - 11px) 0,100% 11px,100% 100%,0 100%); }
+  .cut-2 { clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,0 100%); }
+
+  .rm { padding:17px 19px 0; position:relative; z-index:5; }
+  .rl { font-size:9.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--mute); font-weight:660; }
+  .hn { font-size:29px; font-weight:640; letter-spacing:-.042em; margin:4px 0 2px; line-height:1; }
+  .hm { font-size:11px; color:var(--dim); }
+
+  .topo { margin:16px 0 2px; height:118px; }
+  .topo svg { width:100%; height:100%; overflow:visible; }
+
+  /* ═══ P2: O HISTÓRICO É O PROTAGONISTA ═══
+     A faixa larga com mediana marcada; o número é leitura sobreposta, não o herói. */
+  .gauge { padding:14px 19px 0; position:relative; z-index:5; }
+  .gauge-h { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:6px; }
+  .gauge-l { font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--mute); font-weight:660; }
+  .gauge-v { font-size:19px; font-weight:400; letter-spacing:-.03em; }
+  .gauge-v small { font-size:11px; color:var(--dim); margin-left:2px; }
+  .spark { height:34px; display:flex; align-items:flex-end; gap:2px; position:relative; }
+  .spark i { flex:1; background:var(--edge2); border-radius:.5px; }
+  .spark i.now { background:var(--glow); }
+  /* linha da mediana: dá escala ao número, que sozinho não informa nada */
+  .median { position:absolute; left:0; right:0; height:1px; background:rgba(255,158,69,.34);
+            border-top:1px dashed rgba(255,158,69,.42); }
+  .median span { position:absolute; right:0; top:-13px; font-size:8.5px; color:var(--dim); letter-spacing:.1em; }
+
+  .acts { padding:19px 19px 0; display:flex; flex-direction:column; gap:8px; position:relative; z-index:5; }
+  .act { position:relative; padding:13px 15px; display:flex; align-items:center; gap:11px;
+         background:var(--raise); border:1px solid var(--edge2); transition:transform .16s cubic-bezier(.2,.9,.3,1.2); }
+  .act.pri { background:linear-gradient(102deg,#FF9E45,#E8801F); border-color:transparent; color:#1A0F04; }
+  .act:active { transform:scale(.985); }
+  .at { font-size:13.5px; font-weight:620; letter-spacing:-.012em; }
+  .as { font-size:10.5px; color:var(--dim); }
+  .act.pri .as { color:rgba(26,15,4,.62); }
+  .ak { margin-left:auto; font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--mute); font-weight:660; }
+  .act.pri .ak { color:rgba(26,15,4,.5); }
+
+  /* informativo: SEM chanfro, por regra */
+  .info { padding:13px 15px; background:transparent; border:1px solid var(--edge);
+          display:flex; align-items:center; gap:11px; }
+
+  .oth { padding:20px 19px 0; position:relative; z-index:5; }
+  .oth-h { font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--mute);
+           font-weight:660; padding-bottom:8px; border-bottom:1px solid var(--edge); }
+  .oth-r { display:flex; align-items:center; gap:10px; padding:11px 0; border-bottom:1px solid var(--edge); }
+  .oth-n { font-size:13px; font-weight:560; color:var(--dim); }
+  .oth-s { margin-left:auto; font-size:10px; color:var(--mute); }
+
+  /* ═══ P6: MOVIMENTO — três momentos, e só eles ═══ */
+  @keyframes rise { from { opacity:0; transform:translateX(-50%) scale(.86) } to { opacity:1; transform:translateX(-50%) scale(1) } }
+  @keyframes lightUp { from { opacity:.12 } to { opacity:1 } }
+  @keyframes pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+  .connecting .halo { animation:rise 1.9s cubic-bezier(.3,.9,.4,1) infinite alternate; }
+  .connecting .lit-1 { animation:lightUp 1.1s ease-out .1s infinite alternate; }
+  .connecting .lit-2 { animation:lightUp 1.1s ease-out .5s infinite alternate; }
+  .dots i { animation:pulse 1.3s ease-in-out infinite; }
+  .dots i:nth-child(2) { animation-delay:.18s } .dots i:nth-child(3) { animation-delay:.36s }
+  @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important } }
+
+  .dots { display:flex; gap:5px; justify-content:center; padding-top:16px; }
+  .dots i { width:5px; height:5px; border-radius:50%; background:var(--glow); display:block; }
+
+  /* estado: virou monitor */
+  .badge-lg { padding:30px 19px 0; text-align:center; position:relative; z-index:5; }
+  .badge-ic { width:64px; height:64px; margin:0 auto 18px; border:1.5px solid var(--glow);
+              display:grid; place-items:center; clip-path:polygon(0 0,calc(100% - 11px) 0,100% 11px,100% 100%,0 100%); }
+  .badge-t { font-size:21px; font-weight:640; letter-spacing:-.03em; margin:0 0 6px; }
+  .badge-s { font-size:12.5px; color:var(--dim); max-width:30ch; margin:0 auto; }
+
+  /* vazio */
+  .empty { padding:70px 24px 0; text-align:center; position:relative; z-index:5; }
+  .empty-t { font-size:19px; font-weight:620; letter-spacing:-.026em; margin:16px 0 7px; }
+  .empty-s { font-size:12.5px; color:var(--dim); margin:0 0 22px; }
+
+  /* setup: o ritual */
+  .setup-h { padding:16px 19px 0; position:relative; z-index:5; }
+  .setup-t { font-size:23px; font-weight:640; letter-spacing:-.034em; margin:4px 0 5px; }
+  .setup-s { font-size:12px; color:var(--dim); }
+  .canvas { margin:16px 19px 0; height:220px; border:1px solid var(--edge2); position:relative;
+            background:repeating-linear-gradient(0deg,transparent 0 15px,rgba(255,158,69,.045) 15px 16px),
+                       repeating-linear-gradient(90deg,transparent 0 15px,rgba(255,158,69,.045) 15px 16px); }
+  .canvas svg { width:100%; height:100%; }
+
+  /* legenda */
+  .legend { border-top:1px solid var(--line); margin-top:40px; padding:34px 0 70px; }
+  .lg { display:grid; grid-template-columns:repeat(auto-fit,minmax(238px,1fr)); gap:26px; margin-top:20px; }
+  .lg h3 { margin:0 0 6px; font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); font-weight:640; }
+  .lg p { margin:0; font-size:14px; color:var(--soft); }
+  .demo { display:flex; gap:9px; margin-top:11px; align-items:flex-end; }
+  .demo div { background:oklch(30% .03 55); border:1px solid oklch(40% .04 55); height:38px; flex:1; }
+  code { font-family:ui-monospace,Menlo,monospace; font-size:.87em; background:var(--page);
+         border:1px solid var(--line); border-radius:3px; padding:1px 5px; }
+  @media (max-width:640px){ .phone{width:274px;height:582px} }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">VibeArtemis · Âmbar v2</span>
+    <h1>As sete correções</h1>
+    <p class="lede">
+      A topologia agora é declarada pelo usuário, não detectada. A latência ganhou escala
+      em vez de tamanho. O chanfro virou gramática. E os estados — que é onde um design
+      deixa de ser mockup — existem.
+    </p>
+  </header>
+</div>
+
+<div class="wrap">
+
+  <!-- ══════════════ P1 + P2 + P7 ══════════════ -->
+  <div class="sec">
+    <h2>P1 · P2 · P7</h2>
+    <p class="sec-t">A sala, agora verdadeira</p>
+    <p class="sec-d">
+      A topologia vem do que <strong>você configurou</strong>, não de uma detecção que o
+      protocolo não permite. A leitura de rede mostra o histórico com a mediana marcada —
+      é a comparação que informa, não o número solto. E o herói só aparece quando há host
+      online e recente; com vários, a tela cai para lista sóbria.
+    </p>
+
+    <div class="strip">
+      <div class="sw">
+        <span class="cap">Host ativo · herói</span>
+        <div class="phone">
+          <div class="st"><span class="mono">21:04</span><span class="mono">▮▮▮ 84%</span></div>
+          <div class="vw">
+            <div class="halo"></div>
+            <div class="hd"><div class="mk">
+              <svg class="fil" viewBox="0 0 15 11" fill="none">
+                <path d="M1 10V4a1.6 1.6 0 0 1 3.2 0v2.2" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+                <path d="M14 10V4a1.6 1.6 0 0 0-3.2 0v2.2" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+                <path d="M4.2 6.2c0-1.9 1.2-3 3.3-3s3.3 1.1 3.3 3" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+              </svg><span class="wm">Vibeartemis</span></div>
+            </div>
+
+            <div class="rm">
+              <div class="rl">Sua sala</div>
+              <div class="hn">PC-RAFAEL</div>
+              <div class="hm mono">3 telas · Vibeshine 1.19</div>
+              <div class="topo">
+                <svg viewBox="0 0 250 118" fill="none">
+                  <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#FF9E45" stop-opacity=".26"/>
+                    <stop offset="1" stop-color="#FF9E45" stop-opacity=".06"/></linearGradient></defs>
+                  <g stroke="#332A20" stroke-width="1">
+                    <path d="M0 117h250"/><path d="M12 117v-4M62 117v-4M112 117v-4M162 117v-4M212 117v-4"/>
+                  </g>
+                  <rect x="68" y="2" width="108" height="30" rx="2" fill="url(#g1)" stroke="#FF9E45" stroke-width="1.2"/>
+                  <text x="122" y="21" text-anchor="middle" fill="#FF9E45" font-size="9.5" font-weight="600" font-family="ui-monospace,Menlo,monospace">S8 ULTRA</text>
+                  <rect x="48" y="40" width="148" height="46" rx="2" fill="#191510" stroke="#4A3E2E" stroke-width="1.2"/>
+                  <text x="122" y="62" text-anchor="middle" fill="#A2937F" font-size="9.5" font-weight="600" font-family="ui-monospace,Menlo,monospace">DELL 27"</text>
+                  <text x="122" y="75" text-anchor="middle" fill="#6B5F51" font-size="7.5" font-family="ui-monospace,Menlo,monospace">PRINCIPAL</text>
+                  <rect x="97" y="94" width="50" height="18" rx="2" fill="url(#g1)" stroke="#FF9E45" stroke-width="1.2"/>
+                  <text x="122" y="107" text-anchor="middle" fill="#FF9E45" font-size="7.5" font-weight="600" font-family="ui-monospace,Menlo,monospace">VOCÊ</text>
+                  <path d="M122 32v8M122 86v8" stroke="#FF9E45" stroke-width="1" stroke-dasharray="2 3" opacity=".5"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="gauge">
+              <div class="gauge-h">
+                <span class="gauge-l">Rede</span>
+                <span class="gauge-v mono">18<small>ms</small></span>
+              </div>
+              <div class="spark">
+                <div class="median" style="bottom:44%"><span class="mono">MED 21</span></div>
+                <i style="height:38%"></i><i style="height:54%"></i><i style="height:44%"></i>
+                <i style="height:66%"></i><i style="height:50%"></i><i style="height:78%"></i>
+                <i style="height:58%"></i><i style="height:46%"></i><i style="height:62%"></i>
+                <i style="height:42%"></i><i class="now" style="height:36%"></i>
+              </div>
+            </div>
+
+            <div class="acts">
+              <div class="act pri cut-1">
+                <div><div class="at">Assumir como monitor</div><div class="as">Estende a área de trabalho</div></div>
+                <span class="ak">↵</span>
+              </div>
+              <div class="act cut-2">
+                <div><div class="at">Abrir biblioteca</div><div class="as">14 aplicativos</div></div>
+                <span class="ak">→</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sw">
+        <span class="cap">P7 · sem host ativo, sem herói</span>
+        <div class="phone">
+          <div class="st"><span class="mono">09:12</span><span class="mono">▮▮▮ 61%</span></div>
+          <div class="vw">
+            <div class="hd"><div class="mk">
+              <svg class="fil" viewBox="0 0 15 11" fill="none">
+                <path d="M1 10V4a1.6 1.6 0 0 1 3.2 0v2.2" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+                <path d="M14 10V4a1.6 1.6 0 0 0-3.2 0v2.2" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+                <path d="M4.2 6.2c0-1.9 1.2-3 3.3-3s3.3 1.1 3.3 3" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+              </svg><span class="wm">Vibeartemis</span></div>
+            </div>
+            <div class="rm"><div class="rl">Suas salas</div><div class="hn" style="font-size:25px">4 hosts</div></div>
+            <div class="oth" style="padding-top:14px">
+              <div class="oth-h">Todos dormindo</div>
+              <div class="oth-r"><span class="oth-n">PC-RAFAEL</span><span class="oth-s mono">há 4h</span></div>
+              <div class="oth-r"><span class="oth-n">Notebook</span><span class="oth-s mono">ontem</span></div>
+              <div class="oth-r"><span class="oth-n">Sala</span><span class="oth-s mono">há 3 dias</span></div>
+              <div class="oth-r"><span class="oth-n">Trabalho</span><span class="oth-s mono">semana passada</span></div>
+            </div>
+            <div class="acts" style="padding-top:18px">
+              <div class="act pri cut-1">
+                <div><div class="at">Acordar PC-RAFAEL</div><div class="as">Wake-on-LAN</div></div>
+                <span class="ak">↵</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ P5 estados ══════════════ -->
+  <div class="sec">
+    <h2>P5 · P6</h2>
+    <p class="sec-t">Os estados, onde isso vira produto</p>
+    <p class="sec-d">
+      Conectando é onde a metáfora da luz se paga: o halo respira e as telas acendem em
+      sequência. E há um estado que só existe neste produto — quando este aparelho
+      <em>já é</em> uma tela do PC, e o catálogo do host encolhe.
+    </p>
+
+    <div class="strip">
+      <div class="sw">
+        <span class="cap">Conectando · animado</span>
+        <div class="phone connecting">
+          <div class="st"><span class="mono">21:04</span><span class="mono">▮▮▮ 84%</span></div>
+          <div class="vw">
+            <div class="halo"></div>
+            <div class="hd"><div class="mk">
+              <svg class="fil" viewBox="0 0 15 11" fill="none">
+                <path d="M1 10V4a1.6 1.6 0 0 1 3.2 0v2.2" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+                <path d="M14 10V4a1.6 1.6 0 0 0-3.2 0v2.2" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+                <path d="M4.2 6.2c0-1.9 1.2-3 3.3-3s3.3 1.1 3.3 3" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+              </svg><span class="wm">Vibeartemis</span></div>
+            </div>
+            <div class="rm" style="padding-top:34px">
+              <div class="rl">Acendendo</div>
+              <div class="hn">PC-RAFAEL</div>
+              <div class="topo" style="margin-top:26px">
+                <svg viewBox="0 0 250 118" fill="none">
+                  <defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#FF9E45" stop-opacity=".26"/>
+                    <stop offset="1" stop-color="#FF9E45" stop-opacity=".06"/></linearGradient></defs>
+                  <g class="lit-1">
+                    <rect x="68" y="2" width="108" height="30" rx="2" fill="url(#g2)" stroke="#FF9E45" stroke-width="1.2"/>
+                    <text x="122" y="21" text-anchor="middle" fill="#FF9E45" font-size="9.5" font-weight="600" font-family="ui-monospace,Menlo,monospace">S8 ULTRA</text>
+                  </g>
+                  <rect x="48" y="40" width="148" height="46" rx="2" fill="#191510" stroke="#4A3E2E" stroke-width="1.2"/>
+                  <text x="122" y="66" text-anchor="middle" fill="#A2937F" font-size="9.5" font-weight="600" font-family="ui-monospace,Menlo,monospace">DELL 27"</text>
+                  <g class="lit-2">
+                    <rect x="97" y="94" width="50" height="18" rx="2" fill="url(#g2)" stroke="#FF9E45" stroke-width="1.2"/>
+                    <text x="122" y="107" text-anchor="middle" fill="#FF9E45" font-size="7.5" font-weight="600" font-family="ui-monospace,Menlo,monospace">VOCÊ</text>
+                  </g>
+                </svg>
+              </div>
+              <div class="dots"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sw">
+        <span class="cap">Este aparelho virou tela</span>
+        <div class="phone">
+          <div class="st"><span class="mono">21:31</span><span class="mono">▮▮▮ 79%</span></div>
+          <div class="vw">
+            <div class="halo" style="opacity:.85"></div>
+            <div class="hd"><div class="mk">
+              <svg class="fil" viewBox="0 0 15 11" fill="none">
+                <path d="M1 10V4a1.6 1.6 0 0 1 3.2 0v2.2" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+                <path d="M14 10V4a1.6 1.6 0 0 0-3.2 0v2.2" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+                <path d="M4.2 6.2c0-1.9 1.2-3 3.3-3s3.3 1.1 3.3 3" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/>
+              </svg><span class="wm">Vibeartemis</span></div>
+            </div>
+            <div class="badge-lg">
+              <div class="badge-ic">
+                <svg width="30" height="24" viewBox="0 0 30 24" fill="none">
+                  <rect x="1" y="1" width="28" height="19" stroke="#FF9E45" stroke-width="1.3"/>
+                  <path d="M10 23h10" stroke="#FF9E45" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <p class="badge-t">Você é uma tela</p>
+              <p class="badge-s">Este aparelho é o monitor de cima do PC-RAFAEL desde 21:18.</p>
+            </div>
+            <div class="gauge" style="padding-top:26px">
+              <div class="gauge-h"><span class="gauge-l">Rede</span><span class="gauge-v mono">14<small>ms</small></span></div>
+              <div class="spark">
+                <div class="median" style="bottom:40%"><span class="mono">MED 16</span></div>
+                <i style="height:34%"></i><i style="height:44%"></i><i style="height:38%"></i>
+                <i style="height:52%"></i><i style="height:40%"></i><i style="height:46%"></i>
+                <i style="height:36%"></i><i class="now" style="height:32%"></i>
+              </div>
+            </div>
+            <div class="acts" style="padding-top:20px">
+              <div class="act cut-2"><div><div class="at">Devolver a tela</div><div class="as">Encerra só este monitor</div></div><span class="ak">↵</span></div>
+              <div class="info"><div><div class="at" style="font-weight:560">Jogo continua</div><div class="as">Outros monitores não são afetados</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sw">
+        <span class="cap">Nenhum host</span>
+        <div class="phone">
+          <div class="st"><span class="mono">08:03</span><span class="mono">▮▮▮ 92%</span></div>
+          <div class="vw">
+            <div class="hd"><div class="mk">
+              <svg class="fil" viewBox="0 0 15 11" fill="none">
+                <path d="M1 10V4a1.6 1.6 0 0 1 3.2 0v2.2" stroke="#6B5F51" stroke-width="1.1" stroke-linecap="round"/>
+                <path d="M14 10V4a1.6 1.6 0 0 0-3.2 0v2.2" stroke="#6B5F51" stroke-width="1.1" stroke-linecap="round"/>
+                <path d="M4.2 6.2c0-1.9 1.2-3 3.3-3s3.3 1.1 3.3 3" stroke="#6B5F51" stroke-width="1.1" stroke-linecap="round"/>
+              </svg><span class="wm" style="color:#6B5F51">Vibeartemis</span></div>
+            </div>
+            <div class="empty">
+              <svg width="66" height="50" viewBox="0 0 66 50" fill="none" style="margin:0 auto">
+                <rect x="1" y="1" width="64" height="40" stroke="#332A20" stroke-width="1.2" stroke-dasharray="4 4"/>
+                <path d="M24 49h18" stroke="#332A20" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+              <p class="empty-t">Nenhuma sala ainda</p>
+              <p class="empty-s">Abra o Vibeshine no PC e ele aparece aqui sozinho — ou informe o endereço.</p>
+            </div>
+            <div class="acts">
+              <div class="act pri cut-1"><div><div class="at">Procurar na rede</div><div class="as">Busca automática</div></div><span class="ak">↵</span></div>
+              <div class="act cut-2"><div><div class="at">Informar endereço</div><div class="as">IP ou nome do PC</div></div><span class="ak">→</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ P1 ritual ══════════════ -->
+  <div class="sec">
+    <h2>P1 · o ritual</h2>
+    <p class="sec-t">Arrumar as telas, uma vez</p>
+    <p class="sec-d">
+      O momento em que o app mostra que entende a configuração dele. Arrasta na grade,
+      nomeia, marca a principal. Guardado por host — e pronto para preencher sozinho se
+      algum dia o protocolo expuser a topologia.
+    </p>
+    <div class="strip">
+      <div class="sw">
+        <span class="cap">Configurar topologia</span>
+        <div class="phone">
+          <div class="st"><span class="mono">21:02</span><span class="mono">▮▮▮ 85%</span></div>
+          <div class="vw">
+            <div class="setup-h">
+              <div class="rl">PC-RAFAEL</div>
+              <div class="setup-t">Arrume suas telas</div>
+              <div class="setup-s">Arraste para a posição real. Toque para nomear.</div>
+            </div>
+            <div class="canvas">
+              <svg viewBox="0 0 250 220" fill="none">
+                <defs><linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#FF9E45" stop-opacity=".24"/>
+                  <stop offset="1" stop-color="#FF9E45" stop-opacity=".06"/></linearGradient></defs>
+                <rect x="66" y="16" width="118" height="34" rx="2" fill="url(#g3)" stroke="#FF9E45" stroke-width="1.3"/>
+                <text x="125" y="37" text-anchor="middle" fill="#FF9E45" font-size="10" font-weight="600" font-family="ui-monospace,Menlo,monospace">S8 ULTRA</text>
+                <g stroke="#FF9E45" stroke-width="1.2">
+                  <path d="M62 12h8M66 8v8M180 12h8M184 8v8M62 54h8M66 50v8M180 54h8M184 50v8"/>
+                </g>
+                <rect x="42" y="66" width="166" height="58" rx="2" fill="#191510" stroke="#4A3E2E" stroke-width="1.3"/>
+                <text x="125" y="90" text-anchor="middle" fill="#A2937F" font-size="10" font-weight="600" font-family="ui-monospace,Menlo,monospace">DELL 27"</text>
+                <text x="125" y="105" text-anchor="middle" fill="#6B5F51" font-size="8" font-family="ui-monospace,Menlo,monospace">PRINCIPAL</text>
+                <rect x="92" y="140" width="66" height="24" rx="2" fill="url(#g3)" stroke="#FF9E45" stroke-width="1.3"/>
+                <text x="125" y="156" text-anchor="middle" fill="#FF9E45" font-size="8.5" font-weight="600" font-family="ui-monospace,Menlo,monospace">VOCÊ</text>
+                <rect x="86" y="182" width="78" height="26" rx="2" fill="none" stroke="#332A20" stroke-width="1.2" stroke-dasharray="4 4"/>
+                <text x="125" y="199" text-anchor="middle" fill="#6B5F51" font-size="8.5" font-family="ui-monospace,Menlo,monospace">+ TELA</text>
+              </svg>
+            </div>
+            <div class="acts" style="padding-top:16px">
+              <div class="act pri cut-1"><div><div class="at">Salvar arranjo</div><div class="as">Guardado para este host</div></div><span class="ak">↵</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1 1 300px; min-width:280px; padding-top:22px">
+        <h2>Por que declarar é melhor que detectar</h2>
+        <p style="color:var(--soft); font-size:14.5px">
+          O protocolo Moonlight não expõe topologia — nem contagem de monitores. Detectar
+          exigiria falar com a API própria do Vibeshine, atrás de autenticação separada,
+          acoplando o cliente a um host específico.
+        </p>
+        <p style="color:var(--soft); font-size:14.5px">
+          Declarar é <strong>verdade</strong>. Inferência que erra destrói confiança mais
+          rápido do que a ausência dela. E o custo é uma tela de arrastar retângulos com
+          persistência em JSON — nada de protocolo novo.
+        </p>
+        <p style="color:var(--soft); font-size:14.5px">
+          O ganho colateral: um <strong>momento de setup memorável</strong>. É onde apps
+          ganham afeto — não na décima sessão.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ legenda ══════════════ -->
+  <div class="legend">
+    <h2>O sistema</h2>
+    <div class="lg">
+      <div>
+        <h3>P3 · Gramática do chanfro</h3>
+        <p>
+          <code>11px</code> ação primária, uma por tela. <code>7px</code> acionável
+          secundário. <strong>Nenhum</strong> em superfície informativa. A forma passa a
+          significar interatividade — legível sem depender da cor, o que também resolve
+          quem não distingue o âmbar.
+        </p>
+        <div class="demo">
+          <div style="clip-path:polygon(0 0,calc(100% - 11px) 0,100% 11px,100% 100%,0 100%)"></div>
+          <div style="clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,0 100%)"></div>
+          <div></div>
+        </div>
+      </div>
+      <div>
+        <h3>P4 · Tipografia</h3>
+        <p>
+          O protótipo usa a fonte do sistema — nenhuma identidade sobrevive a isso. No app,
+          <strong>Geist</strong> (OFL, com mono desenhada junto) ou
+          <strong>Instrument Sans</strong>. Números sempre em mono com
+          <code>tabular-nums</code>, senão o display de ms dança a cada leitura.
+        </p>
+      </div>
+      <div>
+        <h3>P2 · Escala, não tamanho</h3>
+        <p>
+          <code>18 ms</code> sozinho não informa — ninguém sabe se é bom. Com a mediana
+          marcada, informa na hora. O histórico virou o elemento largo e o número virou
+          leitura, invertendo o protótipo anterior.
+        </p>
+      </div>
+      <div>
+        <h3>P6 · Três momentos</h3>
+        <p>
+          Acender ao conectar, o número que desliza, e o chanfro que cede sob o dedo. O
+          resto imóvel — animação em lista é onde app parece barato. Tudo com
+          <code>prefers-reduced-motion</code> respeitado.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
