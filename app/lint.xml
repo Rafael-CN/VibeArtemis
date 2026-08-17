@@ -3,5 +3,23 @@
     <issue id="InvalidPackage">
         <ignore path="**/bcpkix-jdk15on-*.jar"/>
     </issue>
+
+    <!-- Herdado do upstream. O id não existe mais no lint 8.13, o que gera um
+         UnknownIssueId por si só; mantido porque removê-lo é decisão do upstream. -->
     <issue id="MissingThemeAttr" severity="error" />
+
+    <!--
+      Checagens que consultam a rede para saber se há versão mais nova disponível.
+
+      O resultado muda conforme o ambiente: aparecem no CI, que tem rede, e não na
+      máquina do dev com cache. Isso quebra o comparador de baseline — ele passou a
+      reprovar o build por um aviso que ninguém introduziu, e um gate que acusa
+      regressão onde não houve é um gate que se aprende a ignorar.
+
+      Atualizar dependência é decisão consciente, não algo que o build deva cobrar
+      todo dia. A verificação de dependências vulneráveis segue no job `deps` do CI.
+    -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
+    <issue id="GradleDependency" severity="ignore" />
+    <issue id="NewerVersionAvailable" severity="ignore" />
 </lint>

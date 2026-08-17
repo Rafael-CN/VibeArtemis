@@ -1,0 +1,505 @@
+<title>Triagem Visual VibeArtemis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* O chrome desta página é deliberadamente neutro: os mockups é que têm cor, e
+     qualquer identidade aqui competiria com a decisão que a página existe para apoiar. */
+  :root {
+    --page: #FAFAFB;
+    --panel: #FFFFFF;
+    --line: #E3E5E9;
+    --ink: #16181D;
+    --ink-soft: #545A64;
+    --ink-faint: #878E99;
+    --rule: #D5D9DF;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: #0C0D10; --panel: #141619; --line: #24272C;
+      --ink: #ECEEF1; --ink-soft: #A2A9B4; --ink-faint: #737A85; --rule: #2E3238;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #0C0D10; --panel: #141619; --line: #24272C;
+    --ink: #ECEEF1; --ink-soft: #A2A9B4; --ink-faint: #737A85; --rule: #2E3238;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+  header { padding: 48px 0 32px; border-bottom: 1px solid var(--line); }
+  .eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; }
+  h1 { margin: 10px 0 12px; font-size: clamp(28px, 4vw, 40px); letter-spacing: -.025em; line-height: 1.1; font-weight: 680; }
+  .lede { margin: 0; max-width: 66ch; color: var(--ink-soft); font-size: 16px; }
+
+  .directions { display: flex; flex-direction: column; gap: 0; }
+
+  section.dir { padding: 44px 0; border-bottom: 1px solid var(--line); }
+  .dir-head { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: baseline; margin-bottom: 8px; }
+  .dir-code {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px; font-weight: 640; letter-spacing: .08em;
+    padding: 3px 9px; border-radius: 2px; color: #fff;
+  }
+  .dir-a .dir-code { background: #1B6EF3; }
+  .dir-b .dir-code { background: #C2410C; }
+  .dir-c .dir-code { background: #4B5563; }
+  h2 { margin: 0; font-size: 22px; letter-spacing: -.015em; font-weight: 660; }
+  .dir-sub { color: var(--ink-soft); max-width: 68ch; margin: 4px 0 22px; }
+
+  .meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+  .pill {
+    font-size: 12px; padding: 3px 10px; border: 1px solid var(--rule);
+    border-radius: 999px; color: var(--ink-soft);
+  }
+  .pill b { font-weight: 620; color: var(--ink); }
+
+  .screens { display: flex; flex-wrap: wrap; gap: 28px; }
+  .screen-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .screen-label { font-size: 12px; color: var(--ink-faint); letter-spacing: .04em; }
+
+  /* ---------- moldura de dispositivo ---------- */
+  .device {
+    width: 300px; height: 620px; border-radius: 30px; overflow: hidden;
+    position: relative; border: 1px solid var(--rule);
+    box-shadow: 0 8px 28px rgba(10,14,22,.10);
+    display: flex; flex-direction: column;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .device { box-shadow: 0 8px 28px rgba(0,0,0,.45); }
+  }
+  .statusbar {
+    height: 26px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px; font-size: 10px; font-weight: 600; flex: 0 0 auto;
+  }
+  .scr { flex: 1; overflow: hidden; position: relative; }
+
+  /* ============================================================ A — M3 Expressive */
+  .m3 { background: #FEF7FF; color: #1D1B20; font-family: Roboto, system-ui, sans-serif; }
+  .m3 .statusbar { color: #1D1B20; }
+  .m3-top { padding: 14px 18px 10px; }
+  .m3-title { font-size: 25px; font-weight: 400; letter-spacing: 0; margin: 0 0 12px; }
+  .m3-search {
+    background: #ECE6F0; border-radius: 999px; padding: 11px 18px;
+    font-size: 13px; color: #49454F; display: flex; align-items: center; gap: 10px;
+  }
+  .m3-body { padding: 6px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .m3-card {
+    background: #ECE6F0; border-radius: 18px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 13px;
+  }
+  .m3-card.on { background: #E8DEF8; }
+  .m3-avatar {
+    width: 38px; height: 38px; border-radius: 999px; background: #6750A4; color: #fff;
+    display: grid; place-items: center; font-size: 14px; font-weight: 500; flex: 0 0 auto;
+  }
+  .m3-card.off .m3-avatar { background: #AEA9B4; }
+  .m3-name { font-size: 15px; font-weight: 500; }
+  .m3-sub { font-size: 12px; color: #49454F; }
+  .m3-fab {
+    position: absolute; right: 16px; bottom: 18px; height: 52px; padding: 0 20px;
+    background: #6750A4; color: #fff; border-radius: 16px;
+    display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 500;
+    box-shadow: 0 3px 8px rgba(103,80,164,.4);
+  }
+  .m3-grid { padding: 8px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .m3-tile { border-radius: 16px; overflow: hidden; background: #ECE6F0; }
+  .m3-art { height: 96px; display: grid; place-items: center; font-size: 22px; }
+  .m3-tile-name { font-size: 12px; padding: 8px 10px 10px; font-weight: 500; }
+  .m3-chips { display: flex; gap: 7px; padding: 4px 14px 10px; flex-wrap: wrap; }
+  .m3-chip { font-size: 12px; padding: 5px 13px; border-radius: 999px; border: 1px solid #79747E; color: #49454F; }
+  .m3-chip.sel { background: #E8DEF8; border-color: transparent; color: #1D192B; }
+
+  /* ============================================================ B — identidade própria */
+  .vb { background: #0E1117; color: #E8ECF2; font-family: system-ui, sans-serif; }
+  .vb .statusbar { color: #8B94A3; }
+  .vb-top { padding: 16px 18px 12px; }
+  .vb-brand { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: #35C4E0; font-weight: 680; }
+  .vb-title { font-size: 26px; font-weight: 620; letter-spacing: -.03em; margin: 5px 0 0; }
+  .vb-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 9px; }
+  .vb-card {
+    background: #171B23; border: 1px solid #232936; border-radius: 4px;
+    padding: 13px 15px; display: flex; align-items: center; gap: 12px; position: relative;
+  }
+  /* A barra de status é fina e reta — sinal, não decoração. */
+  .vb-card::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #2A3240;
+  }
+  .vb-card.on::before { background: #35C4E0; }
+  .vb-dot { width: 7px; height: 7px; border-radius: 999px; background: #3A4354; flex: 0 0 auto; }
+  .vb-card.on .vb-dot { background: #35C4E0; box-shadow: 0 0 0 3px rgba(53,196,224,.16); }
+  .vb-name { font-size: 14.5px; font-weight: 600; letter-spacing: -.01em; }
+  .vb-sub {
+    font-size: 11px; color: #7B8494;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: .02em;
+  }
+  .vb-grid { padding: 10px 14px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .vb-tile { border-radius: 3px; overflow: hidden; border: 1px solid #232936; }
+  .vb-art { height: 74px; display: grid; place-items: center; font-size: 19px; }
+  .vb-tile-name { font-size: 10.5px; padding: 6px 7px; background: #171B23; font-weight: 550; }
+  .vb-section {
+    font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+    color: #5D6675; padding: 14px 16px 6px; font-weight: 640;
+  }
+  .vb-fn {
+    display: flex; gap: 8px; padding: 0 14px 4px;
+  }
+  .vb-fn-item {
+    flex: 1; background: #131820; border: 1px solid #35C4E0; border-radius: 3px;
+    padding: 9px 8px; text-align: center; font-size: 11px; color: #35C4E0; font-weight: 600;
+  }
+
+  /* ============================================================ C — Apple-like */
+  .ap {
+    color: #F2F2F7; font-family: -apple-system, "SF Pro Text", system-ui, sans-serif;
+    background:
+      radial-gradient(120% 80% at 15% 0%, #3A2A56 0%, transparent 55%),
+      radial-gradient(110% 70% at 90% 15%, #14405C 0%, transparent 50%),
+      #0B0B0F;
+  }
+  .ap .statusbar { color: #F2F2F7; }
+  .ap-top { padding: 10px 20px 6px; }
+  .ap-large { font-size: 32px; font-weight: 700; letter-spacing: -.032em; margin: 0; }
+  .ap-search {
+    margin: 12px 20px 4px; background: rgba(118,118,128,.24);
+    backdrop-filter: blur(20px); border-radius: 11px; padding: 8px 13px;
+    font-size: 14px; color: rgba(235,235,245,.6); display: flex; gap: 8px; align-items: center;
+  }
+  .ap-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 0; }
+  /* Lista agrupada de iOS: um bloco, divisores internos recuados. */
+  .ap-group {
+    background: rgba(118,118,128,.16); backdrop-filter: blur(30px);
+    border: .5px solid rgba(255,255,255,.10); border-radius: 14px; overflow: hidden;
+  }
+  .ap-row {
+    padding: 12px 15px; display: flex; align-items: center; gap: 12px;
+    border-bottom: .5px solid rgba(255,255,255,.09);
+  }
+  .ap-row:last-child { border-bottom: 0; }
+  .ap-icon {
+    width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center;
+    font-size: 15px; flex: 0 0 auto;
+    background: linear-gradient(160deg, #0A84FF, #0060DF);
+  }
+  .ap-row.off .ap-icon { background: linear-gradient(160deg, #48484A, #2C2C2E); }
+  .ap-name { font-size: 15.5px; font-weight: 500; letter-spacing: -.015em; }
+  .ap-sub { font-size: 12.5px; color: rgba(235,235,245,.55); letter-spacing: -.005em; }
+  .ap-chev { margin-left: auto; color: rgba(235,235,245,.3); font-size: 15px; }
+  .ap-grid { padding: 10px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+  .ap-tile { border-radius: 15px; overflow: hidden; border: .5px solid rgba(255,255,255,.10); }
+  .ap-art { height: 92px; display: grid; place-items: center; font-size: 23px; }
+  .ap-tile-name {
+    font-size: 12.5px; padding: 9px 11px; font-weight: 500; letter-spacing: -.01em;
+    background: rgba(118,118,128,.18); backdrop-filter: blur(20px);
+  }
+  .ap-header {
+    font-size: 12px; text-transform: uppercase; letter-spacing: .05em;
+    color: rgba(235,235,245,.55); padding: 16px 20px 7px; font-weight: 500;
+  }
+  .ap-tabbar {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 52px;
+    background: rgba(20,20,24,.72); backdrop-filter: blur(24px);
+    border-top: .5px solid rgba(255,255,255,.10);
+    display: flex; align-items: center; justify-content: space-around;
+    font-size: 10px; color: rgba(235,235,245,.5);
+  }
+  .ap-tab.on { color: #0A84FF; }
+  .ap-tab { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .ap-tab span:first-child { font-size: 17px; }
+
+  /* ---------- notas ---------- */
+  .notes { margin-top: 26px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 22px; }
+  .note h3 { margin: 0 0 5px; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-faint); font-weight: 620; }
+  .note p { margin: 0; font-size: 14px; color: var(--ink-soft); }
+
+  footer { padding: 34px 0 56px; color: var(--ink-faint); font-size: 14px; }
+  footer p { max-width: 70ch; margin: 0 0 10px; }
+  code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .9em;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 3px; padding: 1px 5px;
+  }
+  @media (max-width: 720px) { .device { width: 270px; height: 560px; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header>
+  <div class="wrap">
+    <span class="eyebrow">VibeArtemis · triagem de direção visual</span>
+    <h1>Três caminhos para a mesma tela</h1>
+    <p class="lede">
+      A mesma lista de PCs e a mesma biblioteca, desenhadas de três formas. O objetivo aqui
+      é escolher <strong>o caminho</strong>, não a paleta final — cor, tipografia e
+      componentes vêm na triagem seguinte, quando montarmos o design system de verdade.
+      Repare menos no tom exato e mais em como cada uma <em>se comporta</em>.
+    </p>
+  </div>
+</header>
+
+<div class="wrap directions">
+
+  <!-- ============================================= A -->
+  <section class="dir dir-a">
+    <div class="dir-head">
+      <span class="dir-code">A</span>
+      <h2>Material 3 Expressive, bem executado</h2>
+    </div>
+    <p class="dir-sub">
+      O Material atual — não o de 2019. A versão Expressive trouxe motion baseado em
+      física de molas, morfação de formas e componentes que reagem com elasticidade.
+      Boa parte da fluidez que você descreveu já vem pronta e roda no compositor do
+      sistema.
+    </p>
+    <div class="meta-row">
+      <span class="pill">Custo <b>baixo</b></span>
+      <span class="pill">Risco <b>baixo</b></span>
+      <span class="pill">Componentes <b>nativos</b></span>
+      <span class="pill">Acompanha o tema do aparelho</span>
+    </div>
+
+    <div class="screens">
+      <div class="screen-wrap">
+        <span class="screen-label">Lista de PCs</span>
+        <div class="device m3">
+          <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+          <div class="scr">
+            <div class="m3-top">
+              <p class="m3-title">Seus PCs</p>
+              <div class="m3-search"><span>⌕</span><span>Buscar computadores</span></div>
+            </div>
+            <div class="m3-body">
+              <div class="m3-card on">
+                <div class="m3-avatar">R</div>
+                <div><div class="m3-name">PC-RAFAEL</div><div class="m3-sub">Online · Vibeshine 1.19</div></div>
+              </div>
+              <div class="m3-card off">
+                <div class="m3-avatar">N</div>
+                <div><div class="m3-name">Notebook</div><div class="m3-sub">Offline</div></div>
+              </div>
+            </div>
+            <div class="m3-fab"><span>＋</span><span>Adicionar</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen-wrap">
+        <span class="screen-label">Biblioteca</span>
+        <div class="device m3">
+          <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+          <div class="scr">
+            <div class="m3-top"><p class="m3-title">PC-RAFAEL</p></div>
+            <div class="m3-chips">
+              <span class="m3-chip sel">Todos</span>
+              <span class="m3-chip">Jogos</span>
+              <span class="m3-chip">Sessão</span>
+            </div>
+            <div class="m3-grid">
+              <div class="m3-tile"><div class="m3-art" style="background:linear-gradient(140deg,#6750A4,#4A3A78)">🖥</div><div class="m3-tile-name">Remote Monitor</div></div>
+              <div class="m3-tile"><div class="m3-art" style="background:linear-gradient(140deg,#1B5E8C,#123C5C)">🎮</div><div class="m3-tile-name">Steam</div></div>
+              <div class="m3-tile"><div class="m3-art" style="background:linear-gradient(140deg,#3A5A40,#26402B)">🗔</div><div class="m3-tile-name">Desktop</div></div>
+              <div class="m3-tile"><div class="m3-art" style="background:linear-gradient(140deg,#7D4E24,#57351A)">⌨</div><div class="m3-tile-name">Remote Input</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><h3>A favor</h3><p>Menor esforço e o que envelhece melhor. Herda gestos, acessibilidade e temas do sistema de graça, e acompanha o Android sem retrabalho.</p></div>
+      <div class="note"><h3>Contra</h3><p>O app continua parecendo um app Android. Não constrói identidade própria — ao lado do Moonlight, a diferença fica no comportamento, não na aparência.</p></div>
+      <div class="note"><h3>Prazo realista</h3><p>Tema, tipografia e componentes trocados de forma incremental, tela a tela, sem parar o resto do trabalho.</p></div>
+    </div>
+  </section>
+
+  <!-- ============================================= B -->
+  <section class="dir dir-b">
+    <div class="dir-head">
+      <span class="dir-code">B</span>
+      <h2>Identidade própria sobre Material</h2>
+    </div>
+    <p class="dir-sub">
+      A mecânica do Material por baixo, uma linguagem visual sua por cima. Aqui puxei do
+      mundo do próprio produto — instrumentação de vídeo e sinal: cantos retos, tipografia
+      monoespaçada para dado técnico, e cor usada como <em>estado</em>, não como enfeite.
+      É uma hipótese de identidade, não a identidade final.
+    </p>
+    <div class="meta-row">
+      <span class="pill">Custo <b>médio</b></span>
+      <span class="pill">Risco <b>médio</b></span>
+      <span class="pill">Componentes <b>customizados</b></span>
+      <span class="pill">Identidade reconhecível</span>
+    </div>
+
+    <div class="screens">
+      <div class="screen-wrap">
+        <span class="screen-label">Lista de PCs</span>
+        <div class="device vb">
+          <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+          <div class="scr">
+            <div class="vb-top">
+              <div class="vb-brand">VibeArtemis</div>
+              <div class="vb-title">Hosts</div>
+            </div>
+            <div class="vb-body">
+              <div class="vb-card on">
+                <span class="vb-dot"></span>
+                <div><div class="vb-name">PC-RAFAEL</div><div class="vb-sub">192.168.0.14 · 3 monitores</div></div>
+              </div>
+              <div class="vb-card off">
+                <span class="vb-dot"></span>
+                <div><div class="vb-name">Notebook</div><div class="vb-sub">offline · visto 2h atrás</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen-wrap">
+        <span class="screen-label">Biblioteca</span>
+        <div class="device vb">
+          <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+          <div class="scr">
+            <div class="vb-top">
+              <div class="vb-brand">PC-RAFAEL</div>
+              <div class="vb-title">Biblioteca</div>
+            </div>
+            <div class="vb-section">Sessão</div>
+            <div class="vb-fn">
+              <div class="vb-fn-item">Remote Monitor</div>
+              <div class="vb-fn-item">Remote Input</div>
+            </div>
+            <div class="vb-section">Aplicativos</div>
+            <div class="vb-grid">
+              <div class="vb-tile"><div class="vb-art" style="background:linear-gradient(150deg,#16303F,#0F2029)">🎮</div><div class="vb-tile-name">Steam</div></div>
+              <div class="vb-tile"><div class="vb-art" style="background:linear-gradient(150deg,#1C3324,#122117)">🗔</div><div class="vb-tile-name">Desktop</div></div>
+              <div class="vb-tile"><div class="vb-art" style="background:linear-gradient(150deg,#3A2438,#241723)">🕹</div><div class="vb-tile-name">RetroArch</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><h3>A favor</h3><p>O app passa a ter cara própria. As funções de sessão do Vibeshine ganham lugar de função, não de mais um tile de jogo — que é o <code>M97</code> do catálogo resolvido de nascença.</p></div>
+      <div class="note"><h3>Contra</h3><p>Componentes customizados envelhecem: cada versão do Android exige conferir se ainda encaixam. E o gosto pesa mais — a identidade precisa ser boa, não só diferente.</p></div>
+      <div class="note"><h3>Prazo realista</h3><p>Exige a segunda triagem antes de codar. É onde o design system é decidido de fato.</p></div>
+    </div>
+  </section>
+
+  <!-- ============================================= C -->
+  <section class="dir dir-c">
+    <div class="dir-head">
+      <span class="dir-code">C</span>
+      <h2>Apple-like de verdade</h2>
+    </div>
+    <p class="dir-sub">
+      Perseguir a sensação do iOS: título grande que encolhe ao rolar, listas agrupadas
+      com divisores recuados, materiais translúcidos sobre um fundo colorido, e transições
+      que seguem o dedo em vez de tocar uma animação. O visual é a parte fácil; a sensação
+      vem do movimento, e é ali que mora o custo.
+    </p>
+    <div class="meta-row">
+      <span class="pill">Custo <b>alto</b></span>
+      <span class="pill">Risco <b>alto</b></span>
+      <span class="pill">Motion <b>customizado</b></span>
+      <span class="pill">Atenção ao consumo durante o stream</span>
+    </div>
+
+    <div class="screens">
+      <div class="screen-wrap">
+        <span class="screen-label">Lista de PCs</span>
+        <div class="device ap">
+          <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+          <div class="scr">
+            <div class="ap-top"><p class="ap-large">PCs</p></div>
+            <div class="ap-search"><span>⌕</span><span>Buscar</span></div>
+            <div class="ap-body">
+              <div class="ap-group">
+                <div class="ap-row">
+                  <div class="ap-icon">🖥</div>
+                  <div><div class="ap-name">PC-RAFAEL</div><div class="ap-sub">Online · 3 monitores</div></div>
+                  <span class="ap-chev">›</span>
+                </div>
+                <div class="ap-row off">
+                  <div class="ap-icon">💻</div>
+                  <div><div class="ap-name">Notebook</div><div class="ap-sub">Offline</div></div>
+                  <span class="ap-chev">›</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ap-tabbar">
+            <div class="ap-tab on"><span>🖥</span><span>PCs</span></div>
+            <div class="ap-tab"><span>▦</span><span>Apps</span></div>
+            <div class="ap-tab"><span>⚙</span><span>Ajustes</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen-wrap">
+        <span class="screen-label">Biblioteca</span>
+        <div class="device ap">
+          <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+          <div class="scr">
+            <div class="ap-top"><p class="ap-large">Biblioteca</p></div>
+            <div class="ap-header">Sessão</div>
+            <div class="ap-body">
+              <div class="ap-group">
+                <div class="ap-row">
+                  <div class="ap-icon">🖥</div>
+                  <div><div class="ap-name">Remote Monitor</div><div class="ap-sub">Usar como tela extra</div></div>
+                  <span class="ap-chev">›</span>
+                </div>
+                <div class="ap-row">
+                  <div class="ap-icon" style="background:linear-gradient(160deg,#FF9F0A,#C77700)">⌨</div>
+                  <div><div class="ap-name">Remote Input</div><div class="ap-sub">Só teclado e mouse</div></div>
+                  <span class="ap-chev">›</span>
+                </div>
+              </div>
+            </div>
+            <div class="ap-header">Aplicativos</div>
+            <div class="ap-grid">
+              <div class="ap-tile"><div class="ap-art" style="background:linear-gradient(150deg,#1B4F72,#123047)">🎮</div><div class="ap-tile-name">Steam</div></div>
+              <div class="ap-tile"><div class="ap-art" style="background:linear-gradient(150deg,#2D5B3E,#1B3827)">🗔</div><div class="ap-tile-name">Desktop</div></div>
+            </div>
+          </div>
+          <div class="ap-tabbar">
+            <div class="ap-tab"><span>🖥</span><span>PCs</span></div>
+            <div class="ap-tab on"><span>▦</span><span>Apps</span></div>
+            <div class="ap-tab"><span>⚙</span><span>Ajustes</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><h3>A favor</h3><p>É o que mais se aproxima do que você descreveu. Bem feito, a sensação de qualidade é imediata e difícil de imitar.</p></div>
+      <div class="note"><h3>Contra</h3><p>Nada disso vem pronto no Android. Transições interativas e blur em tempo real são trabalho manual, e blur custa GPU — a mesma GPU que decodifica o stream.</p></div>
+      <div class="note"><h3>Prazo realista</h3><p>O maior dos três, e o único que pede prova de conceito antes do compromisso — principalmente o blur durante o streaming.</p></div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      <strong>São mockups estáticos.</strong> A diferença entre B e C está sobretudo no
+      movimento, que não dá para julgar numa imagem parada. Se a decisão empatar entre os
+      dois, o próximo passo é um protótipo animado só das transições.
+    </p>
+    <p>
+      Nada aqui é a paleta final. A cor de B é uma hipótese vinda do domínio do produto;
+      a de C imita o padrão da Apple para deixar a comparação honesta. A identidade real
+      sai da segunda triagem.
+    </p>
+    <p>
+      Uma nota sobre <strong>A</strong>: o Material 3 Expressive trocou animação por
+      duração fixa por física de molas. Parte da fluidez que motivou C já existe nele,
+      de graça e com desempenho melhor. Vale considerar A como base e trazer de C só o
+      que faltar.
+    </p>
+  </div>
+</footer>

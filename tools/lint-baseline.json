@@ -6,9 +6,9 @@
   "Nunca suba um número para fazer o CI passar — é o oposto do propósito."
  ],
  "measuredAt": "2026-08-17",
- "total": 458,
+ "total": 444,
  "bySeverity": {
-  "Warning": 454,
+  "Warning": 440,
   "Error": 4
  },
  "byRule": {
@@ -26,9 +26,7 @@
   "ContentDescription": 12,
   "Typos": 9,
   "VectorRaster": 8,
-  "NewerVersionAvailable": 8,
   "UnknownIssueId": 6,
-  "GradleDependency": 6,
   "NestedWeights": 6,
   "Overdraw": 6,
   "SmallSp": 6,
