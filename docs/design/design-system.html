@@ -1,0 +1,767 @@
+<title>Identidade VibeArtemis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* Chrome neutro de propósito: as três identidades trazem a cor, e qualquer
+     personalidade aqui competiria com a decisão que a página existe para apoiar. */
+  :root {
+    --page:   oklch(99% 0.002 260);
+    --panel:  oklch(100% 0 0);
+    --sunken: oklch(97% 0.003 260);
+    --line:   oklch(91% 0.005 260);
+    --rule:   oklch(85% 0.008 260);
+    --ink:    oklch(21% 0.012 260);
+    --soft:   oklch(45% 0.012 260);
+    --faint:  oklch(60% 0.010 260);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page:   oklch(15% 0.008 260);
+      --panel:  oklch(19% 0.010 260);
+      --sunken: oklch(22% 0.010 260);
+      --line:   oklch(28% 0.012 260);
+      --rule:   oklch(35% 0.014 260);
+      --ink:    oklch(94% 0.004 260);
+      --soft:   oklch(72% 0.010 260);
+      --faint:  oklch(58% 0.010 260);
+    }
+  }
+  :root[data-theme="dark"] {
+    --page:   oklch(15% 0.008 260);
+    --panel:  oklch(19% 0.010 260);
+    --sunken: oklch(22% 0.010 260);
+    --line:   oklch(28% 0.012 260);
+    --rule:   oklch(35% 0.014 260);
+    --ink:    oklch(94% 0.004 260);
+    --soft:   oklch(72% 0.010 260);
+    --faint:  oklch(58% 0.010 260);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .narrow { max-width: 760px; }
+
+  /* ------------------------------------------------------------------ header */
+  header { padding: 72px 0 48px; }
+  .eyebrow {
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--faint); font-weight: 620;
+  }
+  h1 {
+    margin: 14px 0 18px; font-size: clamp(34px, 5.2vw, 56px);
+    line-height: 1.04; letter-spacing: -.035em; font-weight: 700; text-wrap: balance;
+  }
+  .lede { font-size: 18px; color: var(--soft); margin: 0; line-height: 1.55; }
+
+  h2 {
+    margin: 0; font-size: clamp(22px, 2.6vw, 28px);
+    letter-spacing: -.022em; font-weight: 660; text-wrap: balance;
+  }
+  h3 {
+    margin: 0 0 10px; font-size: 12px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--faint); font-weight: 640;
+  }
+  p { margin: 0 0 14px; }
+  .mono {
+    font-family: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --------------------------------------------------------------- fundamentos */
+  .foundations { padding: 40px 0 64px; border-top: 1px solid var(--line); }
+  .found-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px; margin-top: 30px;
+  }
+  .found p { font-size: 14.5px; color: var(--soft); margin: 0; }
+  .found strong { color: var(--ink); font-weight: 600; }
+
+  /* ------------------------------------------------------------------ hero id */
+  section.identity { border-top: 1px solid var(--line); padding: 0 0 68px; }
+
+  .id-hero {
+    padding: 64px 40px 56px; margin: 0 0 40px;
+    display: flex; flex-direction: column; gap: 20px; position: relative; overflow: hidden;
+  }
+  .id-mark {
+    font-size: 11px; letter-spacing: .3em; text-transform: uppercase; font-weight: 700;
+  }
+  .id-name {
+    font-size: clamp(40px, 7vw, 76px); line-height: .95; letter-spacing: -.045em;
+    font-weight: 700; margin: 0;
+  }
+  .id-thesis { font-size: 17px; line-height: 1.5; max-width: 54ch; margin: 0; }
+
+  .block { padding: 30px 0 0; }
+  .cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 34px; }
+
+  /* swatches */
+  .ramp { display: flex; border-radius: 3px; overflow: hidden; border: 1px solid var(--line); }
+  .ramp div { flex: 1; height: 52px; }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 10px; }
+  .sw { border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+  .sw-chip { height: 46px; }
+  .sw-meta { padding: 7px 9px; background: var(--panel); }
+  .sw-name { font-size: 11.5px; font-weight: 600; }
+  .sw-val { font-size: 10px; color: var(--faint); letter-spacing: .01em; }
+
+  /* tipografia */
+  .spec { border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .spec-row {
+    padding: 14px 18px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: baseline; gap: 18px; justify-content: space-between;
+  }
+  .spec-row:last-child { border-bottom: 0; }
+  .spec-label { font-size: 10.5px; color: var(--faint); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+
+  table.tokens { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.tokens th {
+    text-align: left; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--faint); font-weight: 620; padding: 0 12px 8px 0; border-bottom: 1px solid var(--rule);
+  }
+  table.tokens td { padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.tokens td:first-child { white-space: nowrap; }
+
+  /* device */
+  .screens { display: flex; flex-wrap: wrap; gap: 26px; }
+  .screen-wrap { display: flex; flex-direction: column; gap: 9px; }
+  .screen-label { font-size: 11.5px; color: var(--faint); letter-spacing: .05em; }
+  .device {
+    width: 292px; height: 600px; border-radius: 26px; overflow: hidden; position: relative;
+    display: flex; flex-direction: column; border: 1px solid var(--rule);
+    box-shadow: 0 10px 34px oklch(20% 0.02 260 / .14);
+  }
+  .statusbar {
+    height: 26px; flex: 0 0 auto; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 16px; font-size: 10px; font-weight: 600;
+  }
+  .scr { flex: 1; overflow: hidden; position: relative; }
+
+  .verdict { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-top: 32px; }
+  .verdict p { font-size: 14px; color: var(--soft); margin: 0; }
+
+  footer { border-top: 1px solid var(--line); padding: 40px 0 72px; color: var(--soft); font-size: 14.5px; }
+  footer a { color: inherit; }
+  code {
+    font-family: ui-monospace, Menlo, monospace; font-size: .88em;
+    background: var(--sunken); border: 1px solid var(--line); border-radius: 3px; padding: 1px 5px;
+  }
+
+  /* ================================================================== SINAL */
+  .sinal {
+    --bg:    oklch(16% 0.014 235);
+    --surf:  oklch(21% 0.016 235);
+    --line2: oklch(29% 0.020 235);
+    --txt:   oklch(93% 0.008 235);
+    --txt2:  oklch(69% 0.016 235);
+    --sig:   oklch(78% 0.145 200);
+    --warn:  oklch(78% 0.150 75);
+  }
+  .sinal .id-hero { background: var(--bg); color: var(--txt); }
+  .sinal .id-mark { color: var(--sig); }
+  .sinal .id-name { font-family: ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: -.02em; }
+  .sinal .id-thesis { color: var(--txt2); }
+  /* Linhas de escala, como um waveform monitor. Decoração que carrega a tese. */
+  .sinal .id-hero::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(to bottom, oklch(78% 0.145 200 / .07) 0 1px, transparent 1px 44px);
+  }
+
+  .dev-sinal { background: var(--bg); color: var(--txt); font-family: system-ui, sans-serif; }
+  .dev-sinal .statusbar { color: var(--txt2); }
+  .s-top { padding: 18px 18px 12px; border-bottom: 1px solid var(--line2); }
+  .s-brand { font-size: 10px; letter-spacing: .26em; text-transform: uppercase; color: var(--sig); font-weight: 700; }
+  .s-title { font-size: 27px; font-weight: 640; letter-spacing: -.032em; margin: 6px 0 0; }
+  .s-body { padding: 14px; display: flex; flex-direction: column; gap: 1px; }
+  .s-row {
+    background: var(--surf); padding: 14px 15px; display: flex; align-items: center; gap: 13px;
+    position: relative; border-left: 2px solid oklch(35% 0.020 235);
+  }
+  .s-row.on { border-left-color: var(--sig); }
+  .s-name { font-size: 14.5px; font-weight: 600; letter-spacing: -.012em; }
+  .s-meta { font-size: 10.5px; color: var(--txt2); letter-spacing: .04em; }
+  .s-val { margin-left: auto; font-size: 11px; color: var(--sig); font-weight: 620; }
+  .s-row.off .s-val { color: oklch(52% 0.014 235); }
+  .s-sec {
+    font-size: 9.5px; letter-spacing: .2em; text-transform: uppercase; color: oklch(58% 0.016 235);
+    padding: 18px 16px 8px; font-weight: 660;
+  }
+  .s-fn { display: flex; gap: 1px; padding: 0 14px; }
+  .s-fn-i {
+    flex: 1; background: var(--surf); border-top: 2px solid var(--sig);
+    padding: 12px 8px; text-align: center; font-size: 11px; color: var(--sig); font-weight: 620;
+  }
+  .s-grid { padding: 12px 14px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; }
+  .s-tile { background: var(--surf); }
+  .s-art { height: 66px; display: grid; place-items: center; font-size: 18px; }
+  .s-tn { font-size: 10px; padding: 7px; font-weight: 560; }
+
+  /* ================================================================== ÂMBAR */
+  .ambar {
+    --bg:    oklch(14% 0.012 60);
+    --surf:  oklch(19% 0.016 60);
+    --line2: oklch(27% 0.020 60);
+    --txt:   oklch(95% 0.010 70);
+    --txt2:  oklch(71% 0.020 65);
+    --glow:  oklch(80% 0.145 68);
+  }
+  .ambar .id-hero {
+    color: var(--txt);
+    background:
+      radial-gradient(90% 130% at 12% -10%, oklch(34% 0.075 55) 0%, transparent 62%),
+      var(--bg);
+  }
+  .ambar .id-mark { color: var(--glow); }
+  .ambar .id-name { font-weight: 640; }
+  .ambar .id-thesis { color: var(--txt2); }
+
+  .dev-ambar {
+    color: var(--txt); font-family: system-ui, sans-serif;
+    background: radial-gradient(85% 60% at 50% -8%, oklch(26% 0.055 55) 0%, transparent 60%), var(--bg);
+  }
+  .dev-ambar .statusbar { color: var(--txt2); }
+  .a-top { padding: 18px 20px 10px; }
+  .a-brand { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: var(--glow); font-weight: 680; }
+  .a-title { font-size: 30px; font-weight: 620; letter-spacing: -.036em; margin: 5px 0 0; }
+  .a-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .a-card {
+    background: oklch(22% 0.018 60 / .8); border: 1px solid var(--line2);
+    border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 13px;
+  }
+  .a-card.on { border-color: oklch(46% 0.075 62); background: oklch(24% 0.030 60 / .85); }
+  .a-dot { width: 8px; height: 8px; border-radius: 999px; background: oklch(42% 0.014 60); flex: 0 0 auto; }
+  .a-card.on .a-dot { background: var(--glow); box-shadow: 0 0 12px oklch(80% 0.145 68 / .6); }
+  .a-name { font-size: 15px; font-weight: 580; letter-spacing: -.018em; }
+  .a-meta { font-size: 11.5px; color: var(--txt2); }
+  .a-sec { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: oklch(60% 0.020 62); padding: 16px 18px 8px; font-weight: 640; }
+  .a-fn { display: flex; gap: 10px; padding: 0 16px; }
+  .a-fn-i {
+    flex: 1; border-radius: 12px; padding: 13px 8px; text-align: center;
+    font-size: 11.5px; font-weight: 600; color: oklch(18% 0.03 60);
+    background: linear-gradient(160deg, oklch(84% 0.140 72), oklch(72% 0.140 58));
+  }
+  .a-grid { padding: 12px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+  .a-tile { border-radius: 13px; overflow: hidden; border: 1px solid var(--line2); }
+  .a-art { height: 84px; display: grid; place-items: center; font-size: 21px; }
+  .a-tn { font-size: 11.5px; padding: 9px 11px; font-weight: 560; background: oklch(21% 0.016 60); }
+
+  /* ================================================================== GRAFITE */
+  .grafite {
+    --bg:    oklch(97.5% 0.004 250);
+    --surf:  oklch(100% 0 0);
+    --line2: oklch(89% 0.008 250);
+    --txt:   oklch(24% 0.014 250);
+    --txt2:  oklch(50% 0.014 250);
+    --ink2:  oklch(48% 0.155 258);
+  }
+  .grafite .id-hero { background: var(--bg); color: var(--txt); }
+  .grafite .id-mark { color: var(--ink2); }
+  .grafite .id-name { font-weight: 700; letter-spacing: -.05em; }
+  .grafite .id-thesis { color: var(--txt2); }
+  .grafite .id-hero::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      repeating-linear-gradient(to right, oklch(48% 0.155 258 / .05) 0 1px, transparent 1px 32px),
+      repeating-linear-gradient(to bottom, oklch(48% 0.155 258 / .05) 0 1px, transparent 1px 32px);
+  }
+
+  .dev-grafite { background: var(--bg); color: var(--txt); font-family: system-ui, sans-serif; }
+  .dev-grafite .statusbar { color: var(--txt2); }
+  .g-top { padding: 18px 18px 12px; }
+  .g-brand { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: var(--ink2); font-weight: 700; }
+  .g-title { font-size: 28px; font-weight: 680; letter-spacing: -.038em; margin: 5px 0 0; }
+  .g-body { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .g-card {
+    background: var(--surf); border: 1px solid var(--line2); border-radius: 6px;
+    padding: 13px 15px; display: flex; align-items: center; gap: 12px;
+  }
+  .g-card.on { border-left: 3px solid var(--ink2); }
+  .g-name { font-size: 14.5px; font-weight: 620; letter-spacing: -.014em; }
+  .g-meta { font-size: 11px; color: var(--txt2); }
+  .g-badge {
+    margin-left: auto; font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase;
+    font-weight: 680; color: var(--ink2); border: 1px solid var(--ink2);
+    padding: 2px 7px; border-radius: 3px;
+  }
+  .g-card.off .g-badge { color: oklch(62% 0.010 250); border-color: oklch(85% 0.008 250); }
+  .g-sec { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--txt2); padding: 16px 16px 7px; font-weight: 660; }
+  .g-fn { display: flex; gap: 8px; padding: 0 14px; }
+  .g-fn-i {
+    flex: 1; border-radius: 6px; padding: 12px 8px; text-align: center;
+    font-size: 11.5px; font-weight: 640; color: oklch(100% 0 0); background: var(--ink2);
+  }
+  .g-grid { padding: 12px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .g-tile { border-radius: 6px; overflow: hidden; border: 1px solid var(--line2); background: var(--surf); }
+  .g-art { height: 82px; display: grid; place-items: center; font-size: 20px; }
+  .g-tn { font-size: 11.5px; padding: 8px 10px; font-weight: 600; }
+
+  @media (max-width: 640px) {
+    .device { width: 272px; height: 560px; }
+    .id-hero { padding: 44px 24px 40px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header>
+  <div class="wrap narrow">
+    <span class="eyebrow">VibeArtemis · segunda triagem</span>
+    <h1>Três identidades, uma decisão</h1>
+    <p class="lede">
+      Você escolheu construir identidade própria sobre o Material. Aqui estão três
+      hipóteses completas — não três paletas. Cada uma tem uma tese sobre o que este app
+      <em>é</em>, e cor, tipografia, forma e espaço saem dessa tese. Escolha a tese;
+      o resto é consequência.
+    </p>
+  </div>
+</header>
+
+<div class="wrap narrow foundations">
+  <h2>O que as três compartilham</h2>
+  <p style="color:var(--soft); margin-top:14px">
+    Antes das diferenças, o que não está em disputa. Estas quatro decisões valem para
+    qualquer caminho escolhido, e são o que separa um sistema de uma coleção de telas.
+  </p>
+
+  <div class="found-grid">
+    <div class="found">
+      <h3>Cor em OKLCH</h3>
+      <p>
+        <strong>HSL mente sobre luminosidade.</strong> Em HSL, amarelo e azul com o mesmo
+        valor de <em>lightness</em> não parecem igualmente claros — a rampa fica torta e
+        cada tom precisa de ajuste manual. OKLCH é perceptualmente uniforme: variação
+        numérica igual produz variação percebida igual, em qualquer matiz. Rampas saem
+        equilibradas de primeira e alcançam P3 nas telas do S8.
+      </p>
+    </div>
+    <div class="found">
+      <h3>Contraste por APCA</h3>
+      <p>
+        O app vive no escuro, e é justamente aí que <strong>WCAG 2 não dá orientação
+        confiável</strong> — a fórmula trata texto claro sobre fundo escuro como se fosse
+        o inverso, e o olho não. APCA mede diferença de luminosidade percebida e pesa
+        tamanho e peso da fonte. Usamos WCAG como piso de conformidade e APCA como teto
+        de legibilidade.
+      </p>
+    </div>
+    <div class="found">
+      <h3>Uma cor faz o trabalho</h3>
+      <p>
+        Stripe, Linear e Vercel convergem no mesmo padrão: quase tudo neutro, e
+        <strong>um único acento</strong> carregando significado. Num app de streaming
+        isso não é só estética — a cor precisa dizer <em>estado</em> (online, ativo,
+        atenção). Se tudo é colorido, nada informa.
+      </p>
+    </div>
+    <div class="found">
+      <h3>Três pesos, espaçamento generoso</h3>
+      <p>
+        Um peso para ler, um para interagir, um para anunciar. Mais que isso vira ruído.
+        O <em>letter-spacing</em> aperta conforme o corpo cresce, senão títulos grandes
+        parecem frouxos. E a regra de ouro do espaçamento: o que parece suficiente,
+        <strong>dobre</strong>.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SINAL -->
+<section class="identity sinal">
+  <div class="id-hero">
+    <span class="id-mark">Identidade 01</span>
+    <p class="id-name mono">SINAL</p>
+    <p class="id-thesis">
+      Isto é um instrumento de medição. A referência é equipamento de broadcast —
+      waveform monitor, vectorscópio, barras de teste. Tudo é dado: latência, taxa,
+      estado do host. A interface não enfeita o dado, ela o apresenta com precisão.
+    </p>
+  </div>
+
+  <div class="wrap">
+    <div class="block cols2">
+      <div>
+        <h3>Por que essa tese</h3>
+        <p style="color:var(--soft)">
+          O produto mede e transporta sinal de vídeo. Um vocabulário vindo de
+          instrumentação é honesto com o que o app faz, e é território que quase nenhum
+          cliente de streaming ocupa — todos tentam parecer console de videogame.
+        </p>
+        <p style="color:var(--soft)">
+          A consequência formal é rigor: cantos retos, régua de 4 px, monoespaçada para
+          qualquer número, e cor exclusivamente como estado. O ciano não é escolha
+          estética — é a cor de sinal ativo, e some quando não há sinal.
+        </p>
+      </div>
+      <div>
+        <h3>Paleta</h3>
+        <div class="ramp" style="margin-bottom:12px">
+          <div style="background:oklch(16% 0.014 235)"></div>
+          <div style="background:oklch(21% 0.016 235)"></div>
+          <div style="background:oklch(29% 0.020 235)"></div>
+          <div style="background:oklch(45% 0.018 235)"></div>
+          <div style="background:oklch(69% 0.016 235)"></div>
+          <div style="background:oklch(93% 0.008 235)"></div>
+        </div>
+        <div class="swatches">
+          <div class="sw"><div class="sw-chip" style="background:oklch(16% 0.014 235)"></div>
+            <div class="sw-meta"><div class="sw-name">Fundo</div><div class="sw-val mono">oklch(16% .014 235)</div></div></div>
+          <div class="sw"><div class="sw-chip" style="background:oklch(78% 0.145 200)"></div>
+            <div class="sw-meta"><div class="sw-name">Sinal</div><div class="sw-val mono">oklch(78% .145 200)</div></div></div>
+          <div class="sw"><div class="sw-chip" style="background:oklch(78% 0.150 75)"></div>
+            <div class="sw-meta"><div class="sw-name">Atenção</div><div class="sw-val mono">oklch(78% .150 75)</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block cols2">
+      <div>
+        <h3>Tipografia</h3>
+        <div class="spec">
+          <div class="spec-row" style="background:oklch(16% 0.014 235); color:oklch(93% 0.008 235)">
+            <span class="mono" style="font-size:30px; font-weight:640; letter-spacing:-.03em">PC-RAFAEL</span>
+            <span class="spec-label">Display · mono 640</span>
+          </div>
+          <div class="spec-row" style="background:oklch(16% 0.014 235); color:oklch(93% 0.008 235)">
+            <span style="font-size:15px; font-weight:600">Hosts pareados</span>
+            <span class="spec-label">Título · 600</span>
+          </div>
+          <div class="spec-row" style="background:oklch(16% 0.014 235); color:oklch(69% 0.016 235)">
+            <span class="mono" style="font-size:12px">192.168.0.14 · 18 ms · 4K60</span>
+            <span class="spec-label">Dado · mono 400</span>
+          </div>
+        </div>
+        <p style="color:var(--soft); margin-top:12px; font-size:14px">
+          Número sempre em monoespaçada com <code>tabular-nums</code>: latência que oscila
+          não pode fazer a linha inteira dançar.
+        </p>
+      </div>
+      <div>
+        <h3>Forma e espaço</h3>
+        <table class="tokens">
+          <tr><th>Token</th><th>Valor</th><th>Razão</th></tr>
+          <tr><td class="mono">radius</td><td class="mono">0–2px</td><td>Instrumento não tem canto redondo</td></tr>
+          <tr><td class="mono">grid</td><td class="mono">4px</td><td>Régua fina, densidade alta</td></tr>
+          <tr><td class="mono">divisor</td><td class="mono">1px hairline</td><td>Separa sem pesar</td></tr>
+          <tr><td class="mono">estado</td><td class="mono">barra 2px</td><td>Cor à esquerda, legível de relance</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Aplicado</h3>
+      <div class="screens">
+        <div class="screen-wrap">
+          <span class="screen-label">Hosts</span>
+          <div class="device dev-sinal">
+            <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+            <div class="scr">
+              <div class="s-top"><div class="s-brand">VibeArtemis</div><div class="s-title">Hosts</div></div>
+              <div class="s-body">
+                <div class="s-row on"><div><div class="s-name">PC-RAFAEL</div><div class="s-meta mono">192.168.0.14 · 3 telas</div></div><span class="s-val mono">18ms</span></div>
+                <div class="s-row off"><div><div class="s-name">Notebook</div><div class="s-meta mono">offline · 2h</div></div><span class="s-val mono">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-wrap">
+          <span class="screen-label">Biblioteca</span>
+          <div class="device dev-sinal">
+            <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+            <div class="scr">
+              <div class="s-top"><div class="s-brand">PC-RAFAEL</div><div class="s-title">Biblioteca</div></div>
+              <div class="s-sec">Sessão</div>
+              <div class="s-fn"><div class="s-fn-i">Monitor</div><div class="s-fn-i">Input</div></div>
+              <div class="s-sec">Aplicativos</div>
+              <div class="s-grid">
+                <div class="s-tile"><div class="s-art" style="background:oklch(28% 0.045 220)">🎮</div><div class="s-tn">Steam</div></div>
+                <div class="s-tile"><div class="s-art" style="background:oklch(28% 0.040 150)">🗔</div><div class="s-tn">Desktop</div></div>
+                <div class="s-tile"><div class="s-art" style="background:oklch(28% 0.045 320)">🕹</div><div class="s-tn">RetroArch</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <div><h3>Ganha</h3><p>Identidade forte e coerente com o produto. Densidade alta sem parecer entulhada — cabe muita informação porque tudo tem lugar.</p></div>
+      <div><h3>Custa</h3><p>É fria. Se você quer que o app pareça acolhedor, esta não é. Densidade também exige disciplina: qualquer elemento fora da régua salta aos olhos.</p></div>
+      <div><h3>Risco</h3><p>Baixo. Cantos retos e hairlines são fáceis de manter no Android e envelhecem bem.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ ÂMBAR -->
+<section class="identity ambar">
+  <div class="id-hero">
+    <span class="id-mark">Identidade 02</span>
+    <p class="id-name">Âmbar</p>
+    <p class="id-thesis">
+      Isto é luz. O objeto do app é uma tela acesa num ambiente escuro, e a interface se
+      comporta como tal: fundo profundo, superfícies que parecem iluminadas por trás, e
+      um âmbar quente onde há atividade. Cinematográfico em vez de clínico.
+    </p>
+  </div>
+
+  <div class="wrap">
+    <div class="block cols2">
+      <div>
+        <h3>Por que essa tese</h3>
+        <p style="color:var(--soft)">
+          Streaming é consumo noturno. Quase todo app do gênero responde a isso com azul
+          ou verde-neon, o que é frio e já saturado. Âmbar sobre um fundo neutro-quente
+          é a temperatura de uma sala com a luz baixa — e como o matiz quente avança
+          visualmente, ele naturalmente puxa o olho para o que está ativo.
+        </p>
+        <p style="color:var(--soft)">
+          Aqui o acento tem outra função além de estado: ele é a <em>marca</em>. É a
+          identidade mais memorável das três, e a que mais depende de execução — âmbar
+          mal calibrado vira alerta de erro.
+        </p>
+      </div>
+      <div>
+        <h3>Paleta</h3>
+        <div class="ramp" style="margin-bottom:12px">
+          <div style="background:oklch(14% 0.012 60)"></div>
+          <div style="background:oklch(19% 0.016 60)"></div>
+          <div style="background:oklch(27% 0.020 60)"></div>
+          <div style="background:oklch(46% 0.030 62)"></div>
+          <div style="background:oklch(71% 0.020 65)"></div>
+          <div style="background:oklch(95% 0.010 70)"></div>
+        </div>
+        <div class="swatches">
+          <div class="sw"><div class="sw-chip" style="background:oklch(14% 0.012 60)"></div>
+            <div class="sw-meta"><div class="sw-name">Fundo</div><div class="sw-val mono">oklch(14% .012 60)</div></div></div>
+          <div class="sw"><div class="sw-chip" style="background:oklch(80% 0.145 68)"></div>
+            <div class="sw-meta"><div class="sw-name">Âmbar</div><div class="sw-val mono">oklch(80% .145 68)</div></div></div>
+          <div class="sw"><div class="sw-chip" style="background:oklch(70% 0.130 250)"></div>
+            <div class="sw-meta"><div class="sw-name">Frio (raro)</div><div class="sw-val mono">oklch(70% .130 250)</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block cols2">
+      <div>
+        <h3>Tipografia</h3>
+        <div class="spec">
+          <div class="spec-row" style="background:oklch(14% 0.012 60); color:oklch(95% 0.010 70)">
+            <span style="font-size:32px; font-weight:620; letter-spacing:-.038em">Biblioteca</span>
+            <span class="spec-label">Display · 620</span>
+          </div>
+          <div class="spec-row" style="background:oklch(14% 0.012 60); color:oklch(95% 0.010 70)">
+            <span style="font-size:15px; font-weight:580">PC-RAFAEL</span>
+            <span class="spec-label">Título · 580</span>
+          </div>
+          <div class="spec-row" style="background:oklch(14% 0.012 60); color:oklch(71% 0.020 65)">
+            <span style="font-size:12.5px">Online · 3 monitores conectados</span>
+            <span class="spec-label">Apoio · 400</span>
+          </div>
+        </div>
+        <p style="color:var(--soft); margin-top:12px; font-size:14px">
+          Sem monoespaçada na interface. O dado técnico existe, mas não é o herói — fica
+          em corpo menor e cor de apoio.
+        </p>
+      </div>
+      <div>
+        <h3>Forma e espaço</h3>
+        <table class="tokens">
+          <tr><th>Token</th><th>Valor</th><th>Razão</th></tr>
+          <tr><td class="mono">radius</td><td class="mono">12–16px</td><td>Suave, próximo de vidro</td></tr>
+          <tr><td class="mono">grid</td><td class="mono">8px</td><td>Respiro maior, menos densidade</td></tr>
+          <tr><td class="mono">superfície</td><td class="mono">alpha + borda</td><td>Parece iluminada por trás</td></tr>
+          <tr><td class="mono">ativo</td><td class="mono">glow no ponto</td><td>Luz, não preenchimento</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Aplicado</h3>
+      <div class="screens">
+        <div class="screen-wrap">
+          <span class="screen-label">Hosts</span>
+          <div class="device dev-ambar">
+            <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+            <div class="scr">
+              <div class="a-top"><div class="a-brand">VibeArtemis</div><div class="a-title">Hosts</div></div>
+              <div class="a-body">
+                <div class="a-card on"><span class="a-dot"></span><div><div class="a-name">PC-RAFAEL</div><div class="a-meta">Online · 3 monitores</div></div></div>
+                <div class="a-card off"><span class="a-dot"></span><div><div class="a-name">Notebook</div><div class="a-meta">Offline</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-wrap">
+          <span class="screen-label">Biblioteca</span>
+          <div class="device dev-ambar">
+            <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+            <div class="scr">
+              <div class="a-top"><div class="a-brand">PC-RAFAEL</div><div class="a-title">Biblioteca</div></div>
+              <div class="a-sec">Sessão</div>
+              <div class="a-fn"><div class="a-fn-i">Remote Monitor</div><div class="a-fn-i">Remote Input</div></div>
+              <div class="a-sec">Aplicativos</div>
+              <div class="a-grid">
+                <div class="a-tile"><div class="a-art" style="background:linear-gradient(155deg,oklch(34% 0.06 240),oklch(22% 0.04 240))">🎮</div><div class="a-tn">Steam</div></div>
+                <div class="a-tile"><div class="a-art" style="background:linear-gradient(155deg,oklch(34% 0.05 150),oklch(22% 0.035 150))">🗔</div><div class="a-tn">Desktop</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <div><h3>Ganha</h3><p>A mais memorável e a mais convidativa. Boa em ambiente escuro, que é como o app é usado de fato.</p></div>
+      <div><h3>Custa</h3><p>Menos densidade — cabe menos informação por tela. E âmbar é perigosamente perto de "alerta": exige separar bem o acento da cor de erro.</p></div>
+      <div><h3>Risco</h3><p>Médio. Gradientes e brilhos precisam de disciplina para não virar decoração; a linha entre cinematográfico e carregado é fina.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ GRAFITE -->
+<section class="identity grafite">
+  <div class="id-hero">
+    <span class="id-mark">Identidade 03</span>
+    <p class="id-name">Grafite</p>
+    <p class="id-thesis">
+      Isto é uma ferramenta de trabalho. A referência é documentação técnica e desenho de
+      engenharia: claro, alto contraste, tipografia forte e uma tinta só. Aposta contra a
+      corrente — praticamente nenhum cliente de streaming é claro.
+    </p>
+  </div>
+
+  <div class="wrap">
+    <div class="block cols2">
+      <div>
+        <h3>Por que essa tese</h3>
+        <p style="color:var(--soft)">
+          Você usa o S8 Ultra como notebook. Metade do uso é trabalho, à luz do dia, e
+          nesse contexto uma interface escura é a escolha errada — cansa mais e some no
+          sol. Esta identidade parte do uso diurno e trata o modo escuro como variante,
+          não como padrão.
+        </p>
+        <p style="color:var(--soft)">
+          Distinção estratégica: num segmento inteiramente escuro, ser claro é
+          reconhecível de imediato. E ajuda o app a se posicionar como ferramenta, não
+          como acessório de jogo.
+        </p>
+      </div>
+      <div>
+        <h3>Paleta</h3>
+        <div class="ramp" style="margin-bottom:12px">
+          <div style="background:oklch(97.5% 0.004 250)"></div>
+          <div style="background:oklch(93% 0.006 250)"></div>
+          <div style="background:oklch(89% 0.008 250)"></div>
+          <div style="background:oklch(66% 0.012 250)"></div>
+          <div style="background:oklch(50% 0.014 250)"></div>
+          <div style="background:oklch(24% 0.014 250)"></div>
+        </div>
+        <div class="swatches">
+          <div class="sw"><div class="sw-chip" style="background:oklch(97.5% 0.004 250)"></div>
+            <div class="sw-meta"><div class="sw-name">Papel</div><div class="sw-val mono">oklch(97.5% .004 250)</div></div></div>
+          <div class="sw"><div class="sw-chip" style="background:oklch(48% 0.155 258)"></div>
+            <div class="sw-meta"><div class="sw-name">Tinta</div><div class="sw-val mono">oklch(48% .155 258)</div></div></div>
+          <div class="sw"><div class="sw-chip" style="background:oklch(24% 0.014 250)"></div>
+            <div class="sw-meta"><div class="sw-name">Grafite</div><div class="sw-val mono">oklch(24% .014 250)</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block cols2">
+      <div>
+        <h3>Tipografia</h3>
+        <div class="spec">
+          <div class="spec-row" style="background:oklch(97.5% 0.004 250); color:oklch(24% 0.014 250)">
+            <span style="font-size:30px; font-weight:700; letter-spacing:-.042em">Hosts</span>
+            <span class="spec-label">Display · 700</span>
+          </div>
+          <div class="spec-row" style="background:oklch(97.5% 0.004 250); color:oklch(24% 0.014 250)">
+            <span style="font-size:15px; font-weight:620">PC-RAFAEL</span>
+            <span class="spec-label">Título · 620</span>
+          </div>
+          <div class="spec-row" style="background:oklch(97.5% 0.004 250); color:oklch(50% 0.014 250)">
+            <span style="font-size:11.5px">192.168.0.14 · 3 telas</span>
+            <span class="spec-label">Apoio · 400</span>
+          </div>
+        </div>
+        <p style="color:var(--soft); margin-top:12px; font-size:14px">
+          Pesos mais altos que nas outras duas: em fundo claro, o texto precisa de mais
+          corpo para o mesmo peso visual.
+        </p>
+      </div>
+      <div>
+        <h3>Forma e espaço</h3>
+        <table class="tokens">
+          <tr><th>Token</th><th>Valor</th><th>Razão</th></tr>
+          <tr><td class="mono">radius</td><td class="mono">6px</td><td>Nem duro nem macio</td></tr>
+          <tr><td class="mono">grid</td><td class="mono">8px</td><td>Ritmo de documento</td></tr>
+          <tr><td class="mono">superfície</td><td class="mono">branco + borda</td><td>Sem sombra: papel sobre papel</td></tr>
+          <tr><td class="mono">estado</td><td class="mono">etiqueta</td><td>Texto, não só cor</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Aplicado</h3>
+      <div class="screens">
+        <div class="screen-wrap">
+          <span class="screen-label">Hosts</span>
+          <div class="device dev-grafite">
+            <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+            <div class="scr">
+              <div class="g-top"><div class="g-brand">VibeArtemis</div><div class="g-title">Hosts</div></div>
+              <div class="g-body">
+                <div class="g-card on"><div><div class="g-name">PC-RAFAEL</div><div class="g-meta">192.168.0.14 · 3 telas</div></div><span class="g-badge">Online</span></div>
+                <div class="g-card off"><div><div class="g-name">Notebook</div><div class="g-meta">visto 2h atrás</div></div><span class="g-badge">Offline</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-wrap">
+          <span class="screen-label">Biblioteca</span>
+          <div class="device dev-grafite">
+            <div class="statusbar"><span>21:04</span><span>▮▮▮ 84%</span></div>
+            <div class="scr">
+              <div class="g-top"><div class="g-brand">PC-RAFAEL</div><div class="g-title">Biblioteca</div></div>
+              <div class="g-sec">Sessão</div>
+              <div class="g-fn"><div class="g-fn-i">Remote Monitor</div><div class="g-fn-i">Remote Input</div></div>
+              <div class="g-sec">Aplicativos</div>
+              <div class="g-grid">
+                <div class="g-tile"><div class="g-art" style="background:oklch(92% 0.03 240)">🎮</div><div class="g-tn">Steam</div></div>
+                <div class="g-tile"><div class="g-art" style="background:oklch(92% 0.03 150)">🗔</div><div class="g-tn">Desktop</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <div><h3>Ganha</h3><p>Legibilidade diurna e a maior distinção no segmento. Combina com o uso do S8 Ultra como máquina de trabalho.</p></div>
+      <div><h3>Custa</h3><p>Fundo claro ao lado de um stream escuro incomoda. Exige um modo escuro igualmente resolvido — é a identidade com mais trabalho dobrado.</p></div>
+      <div><h3>Risco</h3><p>Médio-alto. Se o modo escuro for tratado como afterthought, a identidade desmonta justamente no uso noturno.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap narrow">
+    <p>
+      <strong>Como decidir.</strong> Não pela cor — a paleta se ajusta em qualquer uma
+      delas. Decida pela tese: o VibeArtemis é um <em>instrumento</em>, um
+      <em>ambiente</em> ou uma <em>ferramenta</em>? A resposta define o resto sozinha.
+    </p>
+    <p>
+      As três passam nos mesmos critérios de contraste e usam a mesma régua de
+      espaçamento. Nenhuma é mais “acessível” que a outra — a diferença está no que cada
+      uma comunica.
+    </p>
+    <p>
+      Escolhida a tese, o próximo passo é o sistema de verdade: tokens no
+      <code>styles.xml</code>, escala tipográfica, componentes e estados, e o mapeamento
+      sobre Material 3 — mais o modo escuro completo, no caso da Grafite.
+    </p>
+  </div>
+</footer>
