@@ -17,6 +17,16 @@ public class PreferenceConfiguration {
         STRETCH
     }
 
+    /** What happens to the stream when the on-screen keyboard opens. */
+    public enum ImeDisplayMode {
+        /** Legacy behaviour: the keyboard draws over the stream. */
+        OVERLAY,
+        /** Shrink the stream into the space left above the keyboard. */
+        RESIZE,
+        /** Keep the stream's size and slide it up, letting the top go off-screen. */
+        PAN
+    }
+
     public enum FormatOption {
         AUTO,
         FORCE_AV1,
@@ -51,6 +61,7 @@ public class PreferenceConfiguration {
     private static final String RESOLUTION_SCALE_FACTOR_PREF_STRING = "seekbar_resolution_scale_factor";
     private static final String RESUME_WITHOUT_CONFIRM_PREF_STRING = "checkbox_resume_without_confirm";
     private static final String VIDEO_SCALE_MODE_PREF_STRING = "list_video_scale_mode";
+    private static final String IME_DISPLAY_MODE_PREF_STRING = "list_ime_display_mode";
     private static final String SOPS_PREF_STRING = "checkbox_enable_sops";
     private static final String DISABLE_TOASTS_PREF_STRING = "checkbox_disable_warnings";
     private static final String HOST_AUDIO_PREF_STRING = "checkbox_host_audio";
@@ -205,7 +216,12 @@ public class PreferenceConfiguration {
     private static final boolean DEFAULT_TRACKPAD_DRAG_DROP_VIBRATION = false;
     private static final int DEFAULT_TRACKPAD_DRAG_DROP_THRESHOLD = 250;
     private static final boolean DEFAULT_TRACKPAD_SWAP_AXIS = false;
-    private static final boolean DEFAULT_ENABLE_COMMIT_TEXT = false;
+    // On by default: this is the path that carries Unicode code points instead of scancodes,
+    // so accented characters, cedilla and non-QWERTY layouts reach the host correctly.
+    // It also enables swipe typing and voice dictation. Turn it off only if the host does
+    // not understand UTF-8 text events.
+    private static final boolean DEFAULT_ENABLE_COMMIT_TEXT = true;
+    private static final String DEFAULT_IME_DISPLAY_MODE = "resize";
     private static final String DEFAULT_ONSCREEN_KEYBOARD_ALIGN_MODE = "center";
     private static final boolean DEFAULT_SHOW_OVERLAY_TOGGLE_BUTTON = false;
 
@@ -246,6 +262,7 @@ public class PreferenceConfiguration {
     public String onscreenKeyboardAlignMode;
     public boolean enforceDisplayMode, useVirtualDisplay, enableSops, playHostAudio, disableWarnings, fullScreen;
     public ScaleMode videoScaleMode;
+    public ImeDisplayMode imeDisplayMode;
     public String language;
     public int renderMode;
     public boolean smallIconMode, multiController, usbDriver, flipFaceButtons;
@@ -604,6 +621,21 @@ public class PreferenceConfiguration {
         }
     }
 
+    private static ImeDisplayMode getImeDisplayMode(Context context) {
+        SharedPreferences prefs = ProfilesManager.getInstance().getOverlayingSharedPreferences(context);
+
+        String str = prefs.getString(IME_DISPLAY_MODE_PREF_STRING, DEFAULT_IME_DISPLAY_MODE);
+        if (str.equals("overlay")) {
+            return ImeDisplayMode.OVERLAY;
+        }
+        else if (str.equals("pan")) {
+            return ImeDisplayMode.PAN;
+        }
+        else {
+            return ImeDisplayMode.RESIZE;
+        }
+    }
+
     private static ScaleMode getVideoScaleMode(Context context) {
         SharedPreferences prefs = ProfilesManager.getInstance().getOverlayingSharedPreferences(context);
 
@@ -854,6 +886,7 @@ private static int getFramePacingValue(Context context) {
         }
 
         config.videoScaleMode = getVideoScaleMode(context);
+        config.imeDisplayMode = getImeDisplayMode(context);
 
         config.videoFormat = getVideoFormatValue(context);
         config.framePacing = getFramePacingValue(context);

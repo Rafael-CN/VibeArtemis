@@ -4,6 +4,8 @@ import com.limelight.nvstream.NvConnectionListener;
 import com.limelight.nvstream.av.audio.AudioRenderer;
 import com.limelight.nvstream.av.video.VideoDecoderRenderer;
 
+import java.nio.charset.StandardCharsets;
+
 public class MoonBridge {
     /* See documentation in Limelight.h for information about these functions and constants */
 
@@ -393,7 +395,23 @@ public class MoonBridge {
 
     public static native void sendMouseHighResHScroll(short scrollAmount);
 
-    public static native void sendUtf8Text(String text);
+    /**
+     * Sends text to the host as Unicode code points rather than scancodes, so the result
+     * does not depend on the host's keyboard layout.
+     *
+     * The conversion to UTF-8 happens here, in Java, on purpose. Passing a String across
+     * JNI and calling GetStringUTFChars() on the other side yields *modified* UTF-8, which
+     * encodes supplementary characters (emoji, U+10000 and above) as a CESU-8 surrogate
+     * pair and U+0000 as two bytes. The host decodes neither correctly.
+     */
+    public static void sendUtf8Text(String text) {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+        sendUtf8TextBytes(text.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static native void sendUtf8TextBytes(byte[] utf8);
 
     public static native String getStageName(int stage);
 

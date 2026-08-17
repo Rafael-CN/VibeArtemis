@@ -1,8 +1,37 @@
 # EPIC E01 — Teclado no padrão AnyDesk
 
-- **Status:** analisado, não iniciado
+- **Status:** implementado, **pendente de validação em dispositivo**
 - **Prioridade:** máxima — é a dor que motivou o fork
-- **Data da análise:** 2026-08-16
+- **Data da análise:** 2026-08-16 · **Implementação:** 2026-08-17
+
+## O que já foi implementado
+
+| # | Item | Onde | Verificação |
+|---|---|---|---|
+| 1 | Correção do flush que descartava texto longo | `binding/input/TextInputPump.java` | 10 testes unitários; provados revertendo o bug (5 falham) |
+| 2 | Backspaces enfileirados em lotes de 8 | idem | teste `backspacesAreDeliveredInBoundedBatches` |
+| 3 | `commitText` ligado por padrão | `PreferenceConfiguration.java`, `preferences.xml` | build |
+| 4 | UTF-8 real na ponte JNI (era Modified UTF-8) | `MoonBridge.java`, `simplejni.c` | `jni-check` + build do NDK |
+| 5 | `windowSoftInputMode="adjustResize"` na `.Game` | `AndroidManifest.xml` | build |
+| 6 | Insets do IME com 3 modos (cobrir/redimensionar/deslocar) | `Game.setupImeInsetsHandling()` | **precisa de dispositivo** |
+| 7 | Imersivo não se reaplica com o teclado aberto | `Game.hideSystemUi()` | **precisa de dispositivo** |
+| 8 | Campo "Enviar texto…" no menu do jogo | `GameMenu.showSendTextDialog()` | **precisa de dispositivo** |
+
+Itens 1 a 5 são verificáveis na máquina e estão verdes. Itens 6 a 8 mexem em janela e
+interface: **compilam, mas ninguém os viu funcionando**. Não os considere prontos até
+rodarem num aparelho.
+
+### O que ainda falta
+
+- **Testar contra o Vibeshine** se `sendUtf8Text` chega ao host (passo 0 original). Isso
+  não foi feito e continua sendo o maior risco em aberto.
+- Caminho B (clipboard + Ctrl+V), que depende do teste acima.
+- Pular o sleep de 50 ms quando `IS_SUNSHINE()` — exige PR no submódulo.
+- Investigar os layouts não-QWERTY já existentes.
+
+---
+
+## Análise original
 
 ## Índice
 

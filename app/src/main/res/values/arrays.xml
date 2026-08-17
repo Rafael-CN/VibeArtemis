@@ -32,6 +32,17 @@
         <item>120</item>
     </string-array>
 
+    <string-array name="ime_display_mode_names">
+        <item>@string/ime_mode_overlay</item>
+        <item>@string/ime_mode_resize</item>
+        <item>@string/ime_mode_pan</item>
+    </string-array>
+    <string-array name="ime_display_mode_values" translatable="false">
+        <item>overlay</item>
+        <item>resize</item>
+        <item>pan</item>
+    </string-array>
+
     <string-array name="video_scale_mode_names">
         <item>@string/video_scale_mode_fit</item>
         <item>@string/video_scale_mode_fill</item>

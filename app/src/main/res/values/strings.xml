@@ -693,7 +693,21 @@
     <string name="message_export_sunshine_launcher_file">Exporting launcher file for Sunshine is unstable, and may break at any moment. You\'ll need to export again every time if you changed the app name or image.\nUse Apollo for a more stable experience.</string>
 
     <string name="title_enable_commit_text">Enable commit-text input (swipe/voice)</string>
-    <string name="summary_enable_commit_text">Forward multi-character text from soft keyboards (gesture typing, predictions, voice dictation). May break games that rely on key-by-key input.</string>
+    <string name="summary_enable_commit_text">Forward multi-character text from soft keyboards (gesture typing, predictions, voice dictation). Sends Unicode instead of scancodes, so accents and non-QWERTY layouts reach the host correctly.</string>
+
+    <string name="game_menu_send_text">Send text…</string>
+    <string name="send_text_hint">Type here, then send it all at once</string>
+    <string name="send_text_confirm">Send</string>
+    <plurals name="send_text_queued">
+        <item quantity="one">Sending %d character</item>
+        <item quantity="other">Sending %d characters</item>
+    </plurals>
+
+    <string name="title_ime_display_mode">On-screen keyboard behaviour</string>
+    <string name="summary_ime_display_mode">What happens to the stream when the on-screen keyboard opens</string>
+    <string name="ime_mode_overlay">Keyboard covers the stream</string>
+    <string name="ime_mode_resize">Shrink stream to fit above keyboard</string>
+    <string name="ime_mode_pan">Slide stream up, keep its size</string>
     <string name="title_checkbox_remember_zoom_pan">Remember Zoom&amp;Pan</string>
     <string name="summary_checkbox_remember_zoom_pan">Save changes to zoom and pan position between sessions</string>
     <string name="title_checkbox_enable_perf_overlay_bottom">Move overlay to bottom</string>

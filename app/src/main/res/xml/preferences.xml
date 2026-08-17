@@ -475,10 +475,18 @@
             android:title="@string/title_checkbox_ignore_synth_events"
             app:iconSpaceReserved="false" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="checkbox_enable_commit_text"
             android:summary="@string/summary_enable_commit_text"
             android:title="@string/title_enable_commit_text"
+            app:iconSpaceReserved="false" />
+        <ListPreference
+            android:defaultValue="resize"
+            android:entries="@array/ime_display_mode_names"
+            android:entryValues="@array/ime_display_mode_values"
+            android:key="list_ime_display_mode"
+            android:summary="@string/summary_ime_display_mode"
+            android:title="@string/title_ime_display_mode"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 

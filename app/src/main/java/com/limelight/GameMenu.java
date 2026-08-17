@@ -6,12 +6,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.limelight.binding.input.GameInputDevice;
@@ -103,6 +107,53 @@ public class GameMenu implements Game.GameMenuCallbacks {
         } else {
             option.runnable.run();
         }
+    }
+
+    /**
+     * Lets the user compose text locally and send it to the host in one go.
+     *
+     * Typing straight into the stream is painful: every keystroke travels as a scancode, so
+     * the result depends on the host's keyboard layout, and the on-screen keyboard hides
+     * what you are typing. Here the text is composed on the device — no traffic at all until
+     * you confirm — and then sent as Unicode code points, which land correctly regardless of
+     * the layout configured on the host.
+     */
+    private void showSendTextDialog() {
+        int themeResId = game.getApplicationInfo().theme;
+        Context themedContext = new ContextThemeWrapper(dialogScreenContext, themeResId);
+
+        final EditText input = new EditText(themedContext);
+        input.setHint(R.string.send_text_hint);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        input.setMinLines(2);
+        input.setMaxLines(6);
+        input.setGravity(Gravity.TOP | Gravity.START);
+
+        int padding = (int) (16 * themedContext.getResources().getDisplayMetrics().density);
+        FrameLayout wrapper = new FrameLayout(themedContext);
+        wrapper.setPadding(padding, padding / 2, padding, 0);
+        wrapper.addView(input);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(themedContext);
+        builder.setTitle(R.string.game_menu_send_text);
+        builder.setView(wrapper);
+
+        builder.setPositiveButton(R.string.send_text_confirm, (dialog, which) -> {
+            String text = input.getText().toString();
+            if (!text.isEmpty()) {
+                game.sendTextBlock(text);
+            }
+            hideMenu();
+        });
+        builder.setNegativeButton(R.string.game_menu_cancel, (dialog, which) -> hideMenu());
+        builder.setOnCancelListener(dialog -> hideMenu());
+
+        if (currentDialog != null) {
+            currentDialog.dismiss();
+        }
+        currentDialog = builder.show();
+
+        input.requestFocus();
     }
 
     private void showMenuDialog(String title, MenuOption[] options) {
@@ -316,6 +367,9 @@ public class GameMenu implements Game.GameMenuCallbacks {
 
         options.add(new MenuOption(getString(R.string.game_menu_toggle_keyboard), true,
                 game::toggleKeyboard));
+
+        options.add(new MenuOption(getString(R.string.game_menu_send_text), false,
+                this::showSendTextDialog));
 
         options.add(new MenuOption(getString(game.isZoomModeEnabled() ? R.string.game_menu_disable_zoom_mode : R.string.game_menu_enable_zoom_mode), true,
                 game::toggleZoomMode));

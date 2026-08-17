@@ -96,9 +96,9 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".noirdebug"
-            resValue "string", "app_label", "Diana"
-            resValue "string", "app_label_root", "Diana (Root)"
-            resValue "string", "app_label_game", "Diana (Game)"
+            resValue "string", "app_label", "VibeArtemis Debug"
+            resValue "string", "app_label_root", "VibeArtemis Debug (Root)"
+            resValue "string", "app_label_game", "VibeArtemis Debug (Game)"
 
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -135,9 +135,9 @@ android {
             //
             // TL;DR: Leave the following line alone!
             applicationIdSuffix ".noir"
-            resValue "string", "app_label", "Artemis"
-            resValue "string", "app_label_root", "Artemis (Root)"
-            resValue "string", "app_label_game", "Artemis (Game)"
+            resValue "string", "app_label", "VibeArtemis"
+            resValue "string", "app_label_root", "VibeArtemis (Root)"
+            resValue "string", "app_label_game", "VibeArtemis (Game)"
 
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -172,6 +172,9 @@ dependencies {
     implementation 'com.github.cgutman:ShieldControllerExtensions:1.0.1'
     implementation 'com.google.code.gson:gson:2.13.1'
     implementation 'androidx.annotation:annotation:1.9.1'
+    // Declared explicitly rather than relying on appcompat pulling it in: WindowInsetsCompat
+    // is central to the IME-aware layout, and a transitive dependency for that is fragile.
+    implementation 'androidx.core:core:1.15.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.preference:preference:1.2.1'

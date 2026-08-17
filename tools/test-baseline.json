@@ -1,0 +1,41 @@
+{
+  "_comment": [
+    "Testes que JÁ falhavam no upstream quando este fork começou (commit 3397ec77,",
+    "medido em 2026-08-17 com JDK 21 / AGP 8.13). Servem para o gate distinguir",
+    "'quebrei alguma coisa' de 'já estava quebrado'.",
+    "",
+    "Isto NÃO é uma lista de exceções permanentes. Cada entrada é dívida a pagar —",
+    "ao consertar uma, remova a linha daqui. Nunca acrescente um teste novo a esta",
+    "lista para ficar verde: isso é exatamente o que a definição de pronto proíbe."
+  ],
+  "measuredAt": "2026-08-17",
+  "measuredOn": "3397ec7750969466ad8983364ee1a33182bbffa1",
+  "total": 51,
+  "knownFailures": [
+    {
+      "test": "com.limelight.LayoutInflationTest#allLayoutsInflateSuccessfully",
+      "cause": "InflateException em activity_app_view.xml:45 sob Robolectric",
+      "verdict": "provável limitação do Robolectric com ExtendedFloatingActionButton; investigar"
+    },
+    {
+      "test": "com.limelight.SimpleStartupTest#testApplicationOnCreate",
+      "cause": "NPE: Context.getResources() com mBase null em ArtemisApplication",
+      "verdict": "setup incompleto do Robolectric, não bug de produção"
+    },
+    {
+      "test": "com.limelight.StartupTest#testApplicationStartup",
+      "cause": "mesmo NPE de mBase null",
+      "verdict": "mesma causa do anterior"
+    },
+    {
+      "test": "com.limelight.profiles.ProfilesNavigationTest#clickingProfileButton_launchesProfilesActivity",
+      "cause": "ClassCastException: ExtendedFloatingActionButton não é ImageButton",
+      "verdict": "TESTE DESATUALIZADO. O layout migrou para ExtendedFloatingActionButton e o teste continua fazendo cast para ImageButton em ProfilesNavigationTest.java:77. Correção trivial: trocar o tipo declarado."
+    },
+    {
+      "test": "com.limelight.profiles.ProfilesNavigationTest#clickingProfileButton_launchesProfilesActivityFromAppView",
+      "cause": "ClassCastException: ExtendedFloatingActionButton não é ImageButton",
+      "verdict": "mesma causa, em ProfilesNavigationTest.java:97"
+    }
+  ]
+}

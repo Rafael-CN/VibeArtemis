@@ -123,11 +123,27 @@ Java_com_limelight_nvstream_jni_MoonBridge_sendMouseHighResHScroll(JNIEnv *env, 
     LiSendHighResHScrollEvent(scrollAmount);
 }
 
+// Takes an already-encoded UTF-8 byte array rather than a jstring. GetStringUTFChars()
+// would hand us *modified* UTF-8, where supplementary characters arrive as a CESU-8
+// surrogate pair and U+0000 as two bytes — neither of which the host decodes correctly.
+// Java does the encoding in MoonBridge.sendUtf8Text().
 JNIEXPORT void JNICALL
-Java_com_limelight_nvstream_jni_MoonBridge_sendUtf8Text(JNIEnv *env, jclass clazz, jstring text) {
-    const char* utf8Text = (*env)->GetStringUTFChars(env, text, NULL);
-    LiSendUtf8TextEvent(utf8Text, strlen(utf8Text));
-    (*env)->ReleaseStringUTFChars(env, text, utf8Text);
+Java_com_limelight_nvstream_jni_MoonBridge_sendUtf8TextBytes(JNIEnv *env, jclass clazz, jbyteArray utf8) {
+    jsize length = (*env)->GetArrayLength(env, utf8);
+    if (length <= 0) {
+        return;
+    }
+
+    jbyte* bytes = (*env)->GetByteArrayElements(env, utf8, NULL);
+    if (bytes == NULL) {
+        // OOM: an exception is already pending, so just unwind.
+        return;
+    }
+
+    LiSendUtf8TextEvent((const char*)bytes, (unsigned int)length);
+
+    // JNI_ABORT: we never wrote to the array, so there is nothing to copy back.
+    (*env)->ReleaseByteArrayElements(env, utf8, bytes, JNI_ABORT);
 }
 
 JNIEXPORT void JNICALL

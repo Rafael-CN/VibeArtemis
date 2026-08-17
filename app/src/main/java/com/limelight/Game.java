@@ -12,7 +12,12 @@ import com.limelight.binding.PlatformBinding;
 import com.limelight.binding.audio.AndroidAudioRenderer;
 import com.limelight.binding.input.ControllerHandler;
 import com.limelight.binding.input.GameInputDevice;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.limelight.binding.input.KeyboardTranslator;
+import com.limelight.binding.input.TextInputPump;
 import com.limelight.binding.input.capture.InputCaptureManager;
 import com.limelight.binding.input.capture.InputCaptureProvider;
 import com.limelight.binding.input.touch.AbsoluteTouchContext;
@@ -309,26 +314,32 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     private boolean isZoomButtonMoving = false;
     private float zoomButtonStartX, zoomButtonStartY;
 
-    // Queue for batching commitText payloads
-    private static final int UTF8_CHUNK_SIZE = 512;
-    private final Queue<String> commitTextQueue = new ArrayDeque<>();
+    // Paces text and backspaces on their way to the host. The logic lives in
+    // TextInputPump so it can be covered by unit tests — see TextInputPumpTest.
     private final Handler commitTextHandler = new Handler(Looper.getMainLooper());
 
-    private final Runnable flushCommitTextQueue = new Runnable() {
-        @Override
-        public void run() {
-            if (commitTextQueue.isEmpty()) {
-                return;
-            }
-            String chunk = commitTextQueue.poll();
-            if (conn != null) {
-                conn.sendUtf8Text(chunk);
-            }
-            if (!commitTextQueue.isEmpty()) {
-                commitTextHandler.postDelayed(this, 15);
-            }
-        }
-    };
+    private final TextInputPump textInputPump = new TextInputPump(
+            new TextInputPump.Sink() {
+                @Override
+                public void sendText(String utf8Chunk) {
+                    if (conn != null) {
+                        conn.sendUtf8Text(utf8Chunk);
+                    }
+                }
+
+                @Override
+                public void sendBackspaces(int count) {
+                    if (conn == null || keyboardTranslator == null) {
+                        return;
+                    }
+                    short backspaceCode = keyboardTranslator.translate(KeyEvent.KEYCODE_DEL, 0, -1);
+                    for (int i = 0; i < count; i++) {
+                        conn.sendKeyboardInput(backspaceCode, KeyboardPacket.KEY_DOWN, (byte) 0, (byte) 0);
+                        conn.sendKeyboardInput(backspaceCode, KeyboardPacket.KEY_UP, (byte) 0, (byte) 0);
+                    }
+                }
+            },
+            commitTextHandler::postDelayed);
 
     private final Runnable backgroundPing = () -> {
         if (connected) {
@@ -462,6 +473,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         streamContainer.setOnKeyListener(this);
         streamContainer.setInputCallbacks(this);
         streamContainer.setCommitTextEnabled(prefConfig.enableCommitText);
+        setupImeInsetsHandling();
 
         rootView = streamContainer.getParent();
 
@@ -1669,10 +1681,107 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     };
 
     private void hideSystemUi(int delay) {
+        // While the on-screen keyboard is up, re-asserting immersive mode fights the IME:
+        // the flags come back every couple of seconds and undo the layout we just made room
+        // with. Leave the system UI alone until the keyboard goes away.
+        if (imeVisible && prefConfig != null
+                && prefConfig.imeDisplayMode != PreferenceConfiguration.ImeDisplayMode.OVERLAY) {
+            return;
+        }
+
         Handler h = getWindow().getDecorView().getHandler();
         if (h != null) {
             h.removeCallbacks(hideSystemUi);
             h.postDelayed(hideSystemUi, delay);
+        }
+    }
+
+    /**
+     * Sends a block of text composed locally, rather than key by key.
+     *
+     * Note that "in one go" applies to the user experience, not to the wire: moonlight-common-c
+     * deliberately splits UTF-8 payloads into one packet per code point so that none of them
+     * straddles a packet boundary. Long text therefore takes a moment to arrive, which is why
+     * we tell the user how much was queued.
+     */
+    public void sendTextBlock(String text) {
+        if (text == null || text.isEmpty() || conn == null) {
+            return;
+        }
+
+        textInputPump.offerText(text);
+
+        int chars = text.codePointCount(0, text.length());
+        Toast.makeText(this, getResources().getQuantityString(
+                R.plurals.send_text_queued, chars, chars), Toast.LENGTH_SHORT).show();
+    }
+
+    // ---------------------------------------------------------------- IME-aware layout
+
+    /** True while the on-screen keyboard is covering part of the window. */
+    private boolean imeVisible = false;
+
+    /**
+     * Makes the stream yield space to the on-screen keyboard.
+     *
+     * The activity declares adjustResize, but that alone does nothing here: a window with
+     * FLAG_FULLSCREEN and immersive flags already spans the display, so the system has
+     * nothing to resize and the IME simply draws on top. Opting out of the automatic fitting
+     * and handling insets ourselves is what actually frees up the space.
+     *
+     * StreamContainer.onMeasure() already honours the desired aspect ratio, so shrinking the
+     * available area is enough — the video rescales itself.
+     */
+    private void setupImeInsetsHandling() {
+        if (prefConfig.imeDisplayMode == PreferenceConfiguration.ImeDisplayMode.OVERLAY) {
+            return;
+        }
+
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        ViewCompat.setOnApplyWindowInsetsListener(streamContainer, (v, insets) -> {
+            int imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom;
+            int navBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+
+            // The IME inset already includes the navigation bar area it sits on top of.
+            // Subtracting it keeps us from shrinking the stream twice over.
+            int overlap = Math.max(0, imeBottom - navBottom);
+
+            boolean nowVisible = overlap > 0;
+            if (nowVisible != imeVisible) {
+                imeVisible = nowVisible;
+                if (!nowVisible) {
+                    // Restore immersive mode once the keyboard is gone.
+                    hideSystemUi(500);
+                }
+            }
+
+            applyImeOffset(overlap);
+            return insets;
+        });
+    }
+
+    private void applyImeOffset(int overlap) {
+        if (streamContainer == null) {
+            return;
+        }
+
+        switch (prefConfig.imeDisplayMode) {
+            case RESIZE:
+                streamContainer.setTranslationY(0);
+                streamContainer.setPadding(0, 0, 0, overlap);
+                break;
+
+            case PAN:
+                // Keep the video at its original size and centre it in what is left visible,
+                // which means moving it up by half of what the keyboard took.
+                streamContainer.setPadding(0, 0, 0, 0);
+                streamContainer.setTranslationY(-overlap / 2f);
+                break;
+
+            case OVERLAY:
+            default:
+                break;
         }
     }
 
@@ -4291,7 +4400,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         if (!prefConfig.enableCommitText || conn == null) {
             return false;
         }
-        enqueueCommitText(text.toString());
+        textInputPump.offerText(text.toString());
         return true;
     }
 
@@ -4300,38 +4409,10 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         if (!prefConfig.enableCommitText || conn == null) {
             return false;
         }
-        // Send backspace events for deleted preceding characters
-        if (beforeLength > 0) {
-            short backspaceCode = keyboardTranslator.translate(KeyEvent.KEYCODE_DEL, 0, -1);
-            for (int i = 0; i < beforeLength; i++) {
-                conn.sendKeyboardInput(backspaceCode, com.limelight.nvstream.input.KeyboardPacket.KEY_DOWN, (byte)0, (byte)0);
-                conn.sendKeyboardInput(backspaceCode, com.limelight.nvstream.input.KeyboardPacket.KEY_UP, (byte)0, (byte)0);
-            }
-        }
+        textInputPump.offerBackspaces(beforeLength);
         return true;
     }
 
-    private void enqueueCommitText(String text) {
-        if (text == null || text.isEmpty()) {
-            return;
-        }
-        byte[] utf8 = text.getBytes(StandardCharsets.UTF_8);
-        int offset = 0;
-        while (offset < utf8.length) {
-            int end = Math.min(offset + UTF8_CHUNK_SIZE, utf8.length);
-            // Ensure we don't cut inside a multi-byte sequence
-            while (end < utf8.length && (utf8[end] & 0xC0) == 0x80) {
-                end--; // step back until we are at start of code point
-            }
-            String chunk = new String(utf8, offset, end - offset, StandardCharsets.UTF_8);
-            commitTextQueue.add(chunk);
-            offset = end;
-        }
-        // Kick off flushing if not already scheduled
-        if (commitTextQueue.size() == 1) {
-            commitTextHandler.post(flushCommitTextQueue);
-        }
-    }
 
     /** Helper ricorsivo per trovare la prima SurfaceView nel layout corrente */
     private SurfaceView findFirstSurfaceViewFrom(View v) {

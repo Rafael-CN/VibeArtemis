@@ -88,10 +88,12 @@ if (!existsSync(BRIDGE)) {
 
 const bridgeSrc = readFileSync(BRIDGE, 'utf8');
 
-// métodos native declarados em Java
+// Métodos native declarados em Java. A visibilidade é livre de propósito: um native pode
+// ser `private` e ficar atrás de um wrapper público — é o caso de sendUtf8TextBytes, que
+// existe para receber bytes já em UTF-8 real em vez de um jstring.
 const nativeMethods = new Map();
 for (const m of bridgeSrc.matchAll(
-  /^\s*public\s+static\s+native\s+([\w.<>\[\]]+)\s+(\w+)\s*\(([^)]*)\)/gm,
+  /^\s*(?:public|private|protected\s+)?\s*static\s+native\s+([\w.<>\[\]]+)\s+(\w+)\s*\(([^)]*)\)/gm,
 )) {
   nativeMethods.set(m[2], { returns: m[1], params: m[3] });
 }
@@ -99,7 +101,7 @@ for (const m of bridgeSrc.matchAll(
 // métodos estáticos Java que o C chama de volta (bridge*)
 const javaCallbacks = new Map();
 for (const m of bridgeSrc.matchAll(
-  /^\s*public\s+static\s+(?!native)([\w.<>\[\]]+)\s+(bridge\w+)\s*\(([^)]*)\)/gm,
+  /^\s*(?:public|private|protected\s+)?\s*static\s+(?!native)([\w.<>\[\]]+)\s+(bridge\w+)\s*\(([^)]*)\)/gm,
 )) {
   javaCallbacks.set(m[2], { returns: m[1], params: m[3] });
 }
