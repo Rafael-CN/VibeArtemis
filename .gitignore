@@ -45,5 +45,11 @@ app/.externalNativeBuild/
 # NDK stuff
 .cxx/
 
-# agent files
-AGENTS.md
+# NOTA DO FORK: o upstream ignorava AGENTS.md. Nós versionamos toda a
+# documentação de agentes de propósito — ver docs/adr/0001-versionar-doc-de-agentes.md
+# codemap --check (diretorio temporario)
+.codemap-check/
+
+# cache local do gate de validacao
+.claude/.cache/
+.claude/settings.local.json
