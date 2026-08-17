@@ -177,7 +177,7 @@
     <string name="summary_seekbar_metered_bitrate">Tốc độ bit cao tiêu tốn nhiều dữ liệu hơn, tốc độ bit thấp hơn cải thiện độ mượt mà trên mạng di động.\nĐặt 0 cho ¼ tốc độ bit ở trên.</string>
     <string name="suffix_seekbar_bitrate_mbps">Mbps</string>
     <string name="title_resolution_scale_factor">Hệ số tỷ lệ độ phân giải</string>
-    <string name="summary_resolution_scale_factor">Độ phân giải màn hình ảo được yêu cầu phía máy chủ sẽ được nhân với hệ số này. Độ phân giải phát trực tuyến không bị ảnh hưởng.\nVí dụ: 120% sẽ làm cho 2000x1000 trở thành 2400x1200.\nĐặt hệ số tỷ lệ cao hơn sẽ cải thiện chất lượng hình ảnh cho một số trò chơi.\nYêu cầu Apollo để có hiệu lực.</string>
+    <string name="summary_resolution_scale_factor" formatted="false">Độ phân giải màn hình ảo được yêu cầu phía máy chủ sẽ được nhân với hệ số này. Độ phân giải phát trực tuyến không bị ảnh hưởng.\nVí dụ: 120% sẽ làm cho 2000x1000 trở thành 2400x1200.\nĐặt hệ số tỷ lệ cao hơn sẽ cải thiện chất lượng hình ảnh cho một số trò chơi.\nYêu cầu Apollo để có hiệu lực.</string>
     <string name="resolution_prefix_native">Gốc</string>
     <string name="resolution_prefix_native_fullscreen">Gốc Toàn màn hình</string>
     <string name="resolution_prefix_native_landscape">(Ngang)</string>

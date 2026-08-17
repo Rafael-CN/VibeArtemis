@@ -43,7 +43,7 @@
 | `app/src/main/java/com/limelight/profiles/ProfilesManager.java` | 10 | 266 |
 | `app/src/main/java/com/limelight/nvstream/NvConnection.java` | 8 | 629 |
 | `app/src/test/java/com/limelight/TestLogSuppressor.java` | 8 | 37 |
-| `app/src/main/java/com/limelight/utils/ServerHelper.java` | 7 | 275 |
+| `app/src/main/java/com/limelight/utils/ServerHelper.java` | 7 | 278 |
 | `app/src/main/java/com/limelight/GameMenu.java` | 6 | 403 |
 | `app/src/main/java/com/limelight/nvstream/http/PairingManager.java` | 6 | 357 |
 | `app/src/main/java/com/limelight/nvstream/input/MouseButtonPacket.java` | 6 | 13 |
@@ -63,7 +63,7 @@
 | `app/src/main/java/com/limelight/computers/ComputerManagerService.java` | 13 | 969 |
 | `app/src/main/java/com/limelight/binding/input/ControllerHandler.java` | 12 | 3473 |
 | `app/src/main/java/com/limelight/preferences/AddComputerManually.java` | 12 | 408 |
-| `app/src/main/java/com/limelight/utils/ServerHelper.java` | 12 | 275 |
+| `app/src/main/java/com/limelight/utils/ServerHelper.java` | 12 | 278 |
 | `app/src/main/java/com/limelight/nvstream/NvConnection.java` | 11 | 629 |
 | `app/src/main/java/com/limelight/preferences/StreamSettings.java` | 10 | 1088 |
 | `app/src/main/java/com/limelight/binding/input/virtual_controller/keyboard/KeyBoardController.java` | 8 | 796 |

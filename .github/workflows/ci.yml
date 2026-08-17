@@ -14,17 +14,67 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  security-events: write # para publicar o SARIF do lint no Security tab
+
 jobs:
+  # Tudo que roda em segundos, sem Gradle e sem SDK. Separado de propósito: quando um
+  # destes falha, o retorno chega em menos de um minuto em vez de depois do NDK.
+  fast:
+    name: Verificações rápidas
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Integridade da fronteira JNI
+        run: node tools/codemap/jni-check.mjs
+
+      - name: Mapas de código atualizados
+        run: node tools/codemap/codemap.mjs --check
+
+      - name: Hooks de agente
+        run: node tools/test-hooks.mjs
+
+      - name: Submódulo íntegro
+        run: |
+          # Um gitlink sujo faz o build divergir entre máquinas sem nenhum aviso.
+          if [ -n "$(git status --porcelain -- app/src/main/jni/moonlight-core/moonlight-common-c)" ]; then
+            echo "::error::O submódulo moonlight-common-c está sujo ou aponta para um commit não registrado."
+            git submodule status
+            exit 1
+          fi
+
+      - name: Segredos não commitados
+        run: |
+          # Não substitui uma varredura de verdade; pega o acidente óbvio.
+          if git ls-files | grep -iE '\.(jks|keystore|p12|pem)$|local\.properties$'; then
+            echo "::error::Arquivo de credencial versionado."
+            exit 1
+          fi
+          if git grep -nE 'KEYSTORE_PASSWORD *= *["'"'"'][^"'"'"']+' -- '*.gradle' '*.properties'; then
+            echo "::error::Senha de keystore embutida no build."
+            exit 1
+          fi
+
   verify:
     name: Build e testes
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    needs: fast
 
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive # moonlight-common-c; sem isso o NDK não compila
-          fetch-depth: 0        # o codemap compara com o histórico
+          submodules: recursive
+          fetch-depth: 0
 
       - name: Configurar JDK 21
         uses: actions/setup-java@v4
@@ -44,25 +94,27 @@ jobs:
         with:
           node-version: '22'
 
-      # Testa os próprios hooks. Fica fora do validate.mjs porque valida a
-      # infraestrutura de agentes, não o app.
-      - name: Hooks
-        run: node tools/test-hooks.mjs
-
       # O gate inteiro num passo só: mapas, fronteira JNI, build e testes, na ordem
       # em que falham mais barato primeiro. É o MESMO comando que roda na máquina do
       # dev e no hook de Stop — ter dois caminhos diferentes é como o gate local e o
       # do CI divergem até alguém dizer "mas passa aqui".
       #
-      # É também o que distingue falha nova das 5 que já vinham quebradas do upstream
+      # É também o que distingue falha nova das que já vinham quebradas do upstream
       # (tools/test-baseline.json). Chamar o Gradle direto aqui reprovaria todo commit
       # por dívida herdada, e em uma semana ninguém mais olharia para o CI.
       - name: Gate de qualidade
         run: node tools/validate.mjs
 
-      - name: Lint
-        run: ./gradlew :app:lintNonRoot_gameDebug --console=plain
-        continue-on-error: true # herdamos avisos do upstream; não bloqueia ainda
+      # A baseline existe para não reprovar por dívida herdada. Ela não pode virar um
+      # lugar onde se guarda teste quebrado novo.
+      - name: Baseline de testes não cresceu
+        run: |
+          COUNT=$(node -e "console.log(JSON.parse(require('fs').readFileSync('tools/test-baseline.json','utf8')).knownFailures.length)")
+          echo "Testes na baseline: $COUNT"
+          if [ "$COUNT" -gt 5 ]; then
+            echo "::error::A baseline cresceu para $COUNT. Ela é dívida a pagar, não lista de exceções."
+            exit 1
+          fi
 
       - name: Publicar relatórios
         if: always()
@@ -71,7 +123,7 @@ jobs:
           name: relatorios
           path: |
             app/build/reports/tests/**
-            app/build/reports/lint-results-*.html
+            app/build/reports/lint-results-*.*
           retention-days: 14
           if-no-files-found: ignore
 
@@ -82,3 +134,79 @@ jobs:
           path: app/build/outputs/apk/nonRoot_game/debug/*.apk
           retention-days: 14
           if-no-files-found: warn
+
+  # Lint em job próprio: é lento, herdamos avisos do upstream, e travar o merge por
+  # dívida antiga treinaria todo mundo a ignorar o CI. O que importa é não PIORAR,
+  # então comparamos com a baseline em vez de exigir zero.
+  lint:
+    name: Android Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: fast
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Configurar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar NDK
+        run: sdkmanager --install "ndk;27.0.12077973"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Rodar lint
+        run: ./gradlew :app:lintNonRoot_gameDebug --console=plain
+        continue-on-error: true
+
+      - name: Comparar com a baseline
+        run: node tools/lint-report.mjs
+
+      - name: Publicar no Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: app/build/reports/lint-results-nonRoot_gameDebug.sarif
+          category: android-lint
+        continue-on-error: true
+
+      - name: Publicar relatório de lint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint
+          path: app/build/reports/lint-results-*.*
+          retention-days: 14
+          if-no-files-found: ignore
+
+  # Dependências com vulnerabilidade conhecida. Informativo por ora: a correção de
+  # algumas (OpenSSL estático, por exemplo) é um projeto próprio, e falhar o build por
+  # isso todo dia não ajudaria ninguém.
+  deps:
+    name: Dependências
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: fast
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verificar dependências
+        uses: actions/dependency-review-action@v4
+        if: github.event_name == 'pull_request'
+        with:
+          fail-on-severity: critical
+          comment-summary-in-pr: always

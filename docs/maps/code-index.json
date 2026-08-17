@@ -4,7 +4,7 @@
   "files": 216,
   "javaFiles": 173,
   "nativeFiles": 42,
-  "lines": 64190,
+  "lines": 64193,
   "types": 268,
   "methods": 2530,
   "packages": 30,
@@ -17215,7 +17215,7 @@
   {
    "path": "app/src/main/java/com/limelight/utils/ServerHelper.java",
    "lang": "java",
-   "lines": 275,
+   "lines": 278,
    "package": "com.limelight.utils",
    "imports": [
     "android.app.Activity",
@@ -17301,42 +17301,42 @@
      "modifiers": "static",
      "returns": "void",
      "params": "Activity parent, NvApp app, ComputerDetails computer, ComputerManagerService.ComputerManagerBinder managerBinder, boolean withVDisplay",
-     "line": 141
+     "line": 144
     },
     {
      "name": "doNetworkTest",
      "modifiers": "static",
      "returns": "void",
      "params": "final Activity parent",
-     "line": 157
+     "line": 160
     },
     {
      "name": "run",
      "modifiers": "public",
      "returns": "void",
      "params": "",
-     "line": 160
+     "line": 163
     },
     {
      "name": "doQuit",
      "modifiers": "static",
      "returns": "void",
      "params": "final Activity parent, final NvHTTP httpConn, final String appName, final Runnable onComplete, final Runnable onFail",
-     "line": 189
+     "line": 192
     },
     {
      "name": "run",
      "modifiers": "public",
      "returns": "void",
      "params": "",
-     "line": 198
+     "line": 201
     },
     {
      "name": "doQuit",
      "modifiers": "static",
      "returns": "void",
      "params": "final Activity parent, final ComputerDetails computer, final NvApp app, final ComputerManagerService.ComputerManagerBinder managerBinder, final Runnable onComplete",
-     "line": 246
+     "line": 249
     }
    ],
    "nativeMethods": [],

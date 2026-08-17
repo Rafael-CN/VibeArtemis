@@ -71,6 +71,18 @@ android {
     lint {
         disable 'MissingTranslation'
         lintConfig file('lint.xml')
+
+        // XML alimenta tools/lint-report.mjs, que compara com a baseline; SARIF vai para
+        // o Security tab do GitHub. Sem um formato legível por máquina, "não piorou" não
+        // é verificável e o lint vira relatório que ninguém abre.
+        xmlReport = true
+        sarifReport = true
+        htmlReport = true
+
+        // O build não para no lint — quem decide é o comparador, que só reprova avisos
+        // NOVOS. Travar em dívida herdada faria todo mundo ignorar o CI.
+        abortOnError = false
+        checkDependencies false
     }
 
     bundle {

@@ -4,7 +4,7 @@
 
 > Um registro por arquivo de código. Use para localizar o arquivo certo **sem abri-lo**. Colunas: linhas, tipos declarados, métodos públicos relevantes. Rank = PageRank no grafo de imports (quão central o arquivo é).
 
-Total: **216 arquivos**, **64.190 linhas**, **268 tipos**, **2530 métodos**.
+Total: **216 arquivos**, **64.193 linhas**, **268 tipos**, **2530 métodos**.
 
 ## `app/src/main/java/com/limelight/`
 
@@ -288,7 +288,7 @@ Total: **216 arquivos**, **64.190 linhas**, **268 tipos**, **2530 métodos**.
 | [`TvChannelHelper.java`](../../app/src/main/java/com/limelight/utils/TvChannelHelper.java) | 367 | 2.9 | TvChannelHelper, PreviewProgramBuilder, ChannelBuilder | `setChannelId()`:285 `setType()`:290 `setTitle()`:295 `setPosterArtAspectRatio()`:300 `setIntent()`:305 `setIntentUri()`:310 `setInternalProviderId()`:315 `setPosterArtUri()`:320 |
 | [`ShortcutHelper.java`](../../app/src/main/java/com/limelight/utils/ShortcutHelper.java) | 315 | 3.9 | ShortcutHelper | `reportComputerShortcutUsed()`:97 `reportGameLaunched()`:105 `createAppViewShortcut()`:110 `createAppViewShortcutForOnlineHost()`:155 `createPinnedGameShortcut()`:164 `disableComputerShortcut()`:186 `disableAppShortcut()`:206 `enableAppShortcut()`:216 |
 | [`UiHelper.java`](../../app/src/main/java/com/limelight/utils/UiHelper.java) | 296 | 12.6 | UiHelper | `onApplyWindowInsets()`:113 `onApplyWindowInsets()`:158 `run()`:199 `run()`:211 |
-| [`ServerHelper.java`](../../app/src/main/java/com/limelight/utils/ServerHelper.java) | 275 | 5.1 | ServerHelper | `run()`:160 `run()`:198 |
+| [`ServerHelper.java`](../../app/src/main/java/com/limelight/utils/ServerHelper.java) | 278 | 5.1 | ServerHelper | `run()`:163 `run()`:201 |
 | [`ShaderUtils.java`](../../app/src/main/java/com/limelight/utils/ShaderUtils.java) | 202 | 2.9 | ShaderUtils | — |
 | [`PanZoomHandler.java`](../../app/src/main/java/com/limelight/utils/PanZoomHandler.java) | 174 | 3.2 | PanZoomHandler, ScaleListener, GestureListener | `handleTouchEvent()`:42 `handleSurfaceChange()`:79 `onScale()`:113 `onScaleEnd()`:140 `onScroll()`:147 `setInitialZoomAndPan()`:159 `getScaleFactor()`:170 `getChildX()`:171 |
 | [`PerformanceDataTracker.java`](../../app/src/main/java/com/limelight/utils/PerformanceDataTracker.java) | 148 | 3.6 | PerformanceDataTracker | `savePerformanceStatistics()`:34 `getLog()`:137 `clearLogs()`:142 |

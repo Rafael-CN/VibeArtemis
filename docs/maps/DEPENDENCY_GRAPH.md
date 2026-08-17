@@ -9,7 +9,7 @@
 | Pacote | PageRank | Arquivos | Linhas |
 |---|--:|--:|--:|
 | `com.limelight` | 231.6 | 21 | 9357 |
-| `com.limelight.utils` | 104.8 | 22 | 5726 |
+| `com.limelight.utils` | 104.8 | 22 | 5729 |
 | `com.limelight.nvstream.http` | 104.4 | 6 | 1678 |
 | `com.limelight.nvstream.jni` | 71.6 | 1 | 445 |
 | `com.limelight.preferences` | 53.6 | 10 | 3052 |

@@ -137,7 +137,10 @@ public class ServerHelper {
         return gameIntent;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    // No @RequiresApi here on purpose. The only API 26+ call in this path lives in
+    // createStartIntent() and is already guarded by an SDK_INT check, so requiring O of
+    // every caller was wrong — it just pushed eight NewApi errors onto call sites that
+    // are perfectly safe on API 21, which is the minSdk.
     public static void doStart(
             Activity parent,
             NvApp app,

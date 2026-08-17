@@ -1620,8 +1620,8 @@
 | `run()` | method | `app/src/main/java/com/limelight/preferences/StreamSettings.java:985` |
 | `run()` | method | `app/src/main/java/com/limelight/utils/Dialog.java:47` |
 | `run()` | method | `app/src/main/java/com/limelight/utils/Dialog.java:61` |
-| `run()` | method | `app/src/main/java/com/limelight/utils/ServerHelper.java:160` |
-| `run()` | method | `app/src/main/java/com/limelight/utils/ServerHelper.java:198` |
+| `run()` | method | `app/src/main/java/com/limelight/utils/ServerHelper.java:163` |
+| `run()` | method | `app/src/main/java/com/limelight/utils/ServerHelper.java:201` |
 | `run()` | method | `app/src/main/java/com/limelight/utils/SpinnerDialog.java:62` |
 | `run()` | method | `app/src/main/java/com/limelight/utils/SpinnerDialog.java:69` |
 | `run()` | method | `app/src/main/java/com/limelight/utils/Stereo3DRenderer.java:981` |

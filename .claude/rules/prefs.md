@@ -28,6 +28,16 @@ hardcoded é invisível para todas elas.
 **Não edite `res/values-*/strings.xml`** (as traduções). Elas vêm de contribuidores. Adicione
 só em `values/` — o `lint.xml` já desativa `MissingTranslation` justamente por isso.
 
+Duas exceções, ambas de manutenção e nenhuma delas altera texto traduzido:
+
+- **Remover string órfã** — uma chave que existe só num locale e não no `values/` padrão
+  não é traduzível por ninguém e o lint a reporta como `ExtraTranslation`, severidade
+  Fatal. Havia doze delas em `values-ru`, restos de uma feature que nunca chegou.
+- **Corrigir marcação técnica** — atributos como `formatted="false"` corrigem como o
+  Android interpreta a string, não o que ela diz.
+
+Fora esses dois casos, mudança em tradução é trabalho de tradutor.
+
 ## Migração
 
 Renomear ou remover uma chave deixa o valor antigo órfão em `SharedPreferences`. Se o tipo
