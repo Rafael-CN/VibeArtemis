@@ -10,11 +10,30 @@ Este índice é o mapa do conhecimento acumulado.
 
 | Documento | Quando abrir |
 |---|---|
-| [`guides/setup-ambiente.md`](guides/setup-ambiente.md) | Antes de tentar compilar — o ambiente pode não ter JDK nem SDK |
+| [`CATALOGO.md`](CATALOGO.md) | **Para escolher o que fazer.** 200 propostas com código de referência |
+| [`guides/setup-ambiente.md`](guides/setup-ambiente.md) | Antes de tentar compilar |
+| [`guides/release.md`](guides/release.md) | Para publicar uma versão |
 | [`reference/host-compatibility.md`](reference/host-compatibility.md) | Antes de planejar feature — parte delas exige host Apollo |
-| [`BACKLOG.md`](BACKLOG.md) | Para escolher o que fazer — 308 problemas e 161 ideias, priorizados |
-| [`epics/E01-teclado-anydesk.md`](epics/E01-teclado-anydesk.md) | **A dor que motivou o fork** |
+| [`epics/E01-teclado-anydesk.md`](epics/E01-teclado-anydesk.md) | **A dor que motivou o fork** — implementado, aguardando teste |
 | [`glossary.md`](glossary.md) | Quando um termo do domínio não fizer sentido — 410 termos |
+
+## Catálogo de propostas
+
+Cada proposta tem um **código estável**. Citar o código é como se pede para trabalhar nela.
+
+| Prefixo | Significado | Plano técnico |
+|---|---|---|
+| **E** | EPIC — várias frentes | [`planos/EPICS.md`](planos/EPICS.md) |
+| **M** | Melhoria — escopo definido | [`planos/MELHORIAS.md`](planos/MELHORIAS.md) |
+| **Q** | Ganho rápido | [`planos/QUICK-WINS.md`](planos/QUICK-WINS.md) |
+| **B** | Bug confirmado por leitura | [`planos/BUGS.md`](planos/BUGS.md) |
+
+O índice completo está em [`CATALOGO.md`](CATALOGO.md); a versão navegável, com filtros e
+busca, em `catalogo.html`. O [`BACKLOG.md`](BACKLOG.md) traz a lista bruta por severidade,
+antes da deduplicação.
+
+Os dois são gerados por `tools/build-catalog.mjs` e `tools/build-report.mjs`, que são
+andaimes: rodaram uma vez e depois os arquivos passam a ser mantidos à mão.
 
 ## Referência por subsistema
 

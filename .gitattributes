@@ -1,0 +1,23 @@
+# Arquivos gerados e ferramentas: LF sempre, em qualquer plataforma.
+#
+# O `codemap --check` compara byte a byte o que está no disco com o que o gerador produz.
+# Sem isto, um mapa gerado no Windows chega ao repositório com CRLF, o mesmo gerador no
+# Linux produz LF, e a verificação falha no CI por uma diferença que não existe no
+# conteúdo. Foi exatamente o que aconteceu.
+#
+# O escopo é deliberadamente estreito: normalizar o repositório inteiro produziria um diff
+# enorme e conflitaria com o upstream em cada merge.
+
+docs/maps/**    text eol=lf
+tools/**        text eol=lf
+.claude/**      text eol=lf
+*.mjs           text eol=lf
+
+# Binários que nunca devem ser tratados como texto.
+*.png           binary
+*.jpg           binary
+*.tflite        binary
+*.a             binary
+*.jar           binary
+*.keystore      binary
+*.jks           binary
