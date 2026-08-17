@@ -1,0 +1,498 @@
+<title>Quatro Teses</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{--pg:oklch(97% .003 250);--ink:oklch(20% .012 250);--sf:oklch(45% .012 250);
+    --ft:oklch(61% .010 250);--ln:oklch(89% .006 250);--pn:oklch(100% 0 0)}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --pg:oklch(13% .008 250);--ink:oklch(93% .005 250);--sf:oklch(70% .010 250);
+    --ft:oklch(55% .010 250);--ln:oklch(25% .012 250);--pn:oklch(17% .010 250)}}
+  :root[data-theme="dark"]{--pg:oklch(13% .008 250);--ink:oklch(93% .005 250);--sf:oklch(70% .010 250);
+    --ft:oklch(55% .010 250);--ln:oklch(25% .012 250);--pn:oklch(17% .010 250)}
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:var(--pg);color:var(--ink);font-family:system-ui,-apple-system,sans-serif;
+    font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .w{max-width:1180px;margin:0 auto;padding:0 24px}
+  header{padding:54px 0 20px;max-width:660px}
+  .eb{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ft);font-weight:620}
+  h1{margin:12px 0 14px;font-size:clamp(28px,4.4vw,42px);line-height:1.06;letter-spacing:-.035em;font-weight:700}
+  .ld{font-size:16.5px;color:var(--sf);margin:0}
+
+  section{border-top:1px solid var(--ln);padding:44px 0}
+  .sh{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:baseline;margin-bottom:6px}
+  .sn{font-size:26px;font-weight:700;letter-spacing:-.03em}
+  .stg{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;padding:3px 8px;color:#fff;border-radius:2px}
+  .sq{font-size:16px;color:var(--sf);max-width:60ch;margin:0 0 26px;font-style:italic}
+  .cols{display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start}
+  .info{flex:1 1 300px;min-width:280px}
+  .blk{margin-bottom:22px}
+  .bt{font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--ft);font-weight:660;margin-bottom:5px}
+  .bd{font-size:14.5px;color:var(--sf);margin:0}
+  .bd b{color:var(--ink);font-weight:620}
+  .why{border-left:2px solid var(--ln);padding-left:14px;margin-top:16px}
+  .why div{font-size:13.5px;color:var(--sf);margin-bottom:9px}
+  .why b{color:var(--ink);font-weight:620}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums}
+
+  .ph{width:300px;height:640px;border-radius:30px;overflow:hidden;position:relative;
+    display:flex;flex-direction:column;border:1px solid rgba(0,0,0,.16);flex:0 0 auto}
+  .bar{height:26px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
+    padding:0 16px;font-size:9.5px;font-weight:600;z-index:9}
+  .sg{flex:1;position:relative;overflow:hidden}
+
+  /* ══════════════════ 1 · SINAL — o rack ══════════════════
+     Sem cards. Sem raio. Densidade de equipamento: cada linha é um canal,
+     cada canal tem leitura e delta. A moldura tem régua porque instrumento
+     mede também a si mesmo. */
+  .S{background:#080B0D;color:#C9D6DC;font-family:ui-monospace,"SF Mono",Menlo,monospace}
+  .S .bar{color:#3E4C55;border-bottom:1px solid #131C22}
+  .S-tc{font-size:9.5px;letter-spacing:.1em;color:#1FB8AE}
+  .S-rail{position:absolute;left:0;top:0;bottom:0;width:13px;z-index:2;border-right:1px solid #121A20;
+    background:repeating-linear-gradient(180deg,transparent 0 11px,#131C22 11px 12px)}
+  .S-in{padding-left:13px;height:100%;overflow-y:auto}
+  .S-hd{padding:7px 12px;border-bottom:1px solid #131C22;display:flex;align-items:center;gap:7px}
+  .S-wm{font-size:8.5px;letter-spacing:.3em;color:#1FB8AE;font-weight:700}
+  .S-st{margin-left:auto;font-size:8px;letter-spacing:.12em;color:#1FB8AE;
+    border:1px solid #1FB8AE;padding:1px 5px}
+  /* leitura principal: número gigante com delta — instrumento mostra tendência */
+  .S-main{padding:14px 12px 10px;border-bottom:1px solid #131C22}
+  .S-lb{font-size:8px;letter-spacing:.26em;color:#3E4C55;font-weight:700}
+  .S-big{display:flex;align-items:flex-end;gap:6px;margin-top:3px}
+  .S-nm{font-size:52px;font-weight:200;letter-spacing:-.06em;line-height:.8;color:#E8F4F7}
+  .S-un{font-size:11px;color:#3E4C55;padding-bottom:5px}
+  .S-dl{font-size:11px;color:#1FB8AE;padding-bottom:5px;margin-left:auto}
+  /* osciloscópio: traço contínuo, não barras. É a feature própria do Sinal. */
+  .S-scope{height:56px;margin-top:9px;position:relative;border:1px solid #131C22;background:#0A0E11}
+  .S-scope svg{width:100%;height:100%;display:block}
+  .S-gl{position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(90deg,transparent 0 27px,#101820 27px 28px),
+               repeating-linear-gradient(180deg,transparent 0 13px,#101820 13px 14px)}
+  /* canais: uma linha por saída, com barra de nível */
+  .S-ch{padding:9px 12px;border-bottom:1px solid #101820;display:flex;align-items:center;gap:9px}
+  .S-cn{font-size:11px;font-weight:600;color:#C9D6DC;font-family:system-ui,sans-serif;letter-spacing:-.01em}
+  .S-cm{font-size:8.5px;color:#3E4C55;letter-spacing:.04em}
+  .S-lv{width:38px;height:4px;background:#131C22;flex:0 0 auto;margin-left:auto}
+  .S-lv i{display:block;height:100%;background:#1FB8AE}
+  .S-cv{font-size:10px;color:#1FB8AE;width:38px;text-align:right}
+  .S-cv.o{color:#2C3A42}
+  .S-sec{font-size:8px;letter-spacing:.26em;color:#2C3A42;font-weight:700;padding:13px 12px 5px}
+  .S-btn{margin:8px 12px;padding:10px 11px;border:1px solid #1FB8AE;background:#0C1417;
+    display:flex;align-items:center;gap:8px;cursor:pointer}
+  .S-btn.p{background:#1FB8AE;color:#03191B;border-color:#1FB8AE}
+  .S-bt{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+
+  /* ══════════════════ 2 · GRAFITE — o documento ══════════════════
+     Sumário numerado + corpo. Serifa nos títulos: nenhum app de streaming
+     usa serifa, e documento técnico usa. Fichas de sessão são o objeto
+     central — você abre um documento salvo, não reconfigura. */
+  .G{background:#FBFBF9;color:#1F2328;font-family:system-ui,sans-serif}
+  .G .bar{color:#8A9098;border-bottom:1px solid #E6E6E2}
+  .G-doc{display:flex;height:100%}
+  .G-idx{width:74px;flex:0 0 auto;border-right:1px solid #E6E6E2;background:#F5F5F1;padding:12px 0}
+  .G-ii{padding:7px 9px;font-size:9.5px;color:#8A9098;border-left:2px solid transparent;line-height:1.35}
+  .G-ii.on{border-left-color:#1B3A6B;color:#1B3A6B;font-weight:660;background:#EDEFF3}
+  .G-ii b{display:block;font-size:8.5px;letter-spacing:.06em;opacity:.7;font-weight:600}
+  .G-bd{flex:1;overflow-y:auto;padding:14px 15px}
+  .G-t1{font-family:Georgia,"Times New Roman",serif;font-size:23px;font-weight:600;
+    letter-spacing:-.022em;line-height:1.15;margin:0 0 3px}
+  .G-sub{font-size:10.5px;color:#8A9098;margin-bottom:14px}
+  .G-num{font-size:9px;letter-spacing:.14em;color:#1B3A6B;font-weight:700;margin-bottom:3px}
+  /* ficha: o objeto que só o Grafite tem */
+  .G-fc{border:1px solid #DDDDD7;background:#fff;margin-bottom:8px;cursor:pointer}
+  .G-fh{padding:9px 11px;border-bottom:1px solid #EDEDE8;display:flex;align-items:baseline;gap:8px}
+  .G-fn{font-family:Georgia,serif;font-size:14px;font-weight:600;letter-spacing:-.01em}
+  .G-fk{margin-left:auto;font-size:8.5px;letter-spacing:.1em;color:#8A9098;font-weight:600;
+    border:1px solid #DDDDD7;padding:1px 5px;border-radius:2px}
+  .G-fr{padding:5px 11px;display:flex;gap:9px;border-bottom:1px solid #F2F2EE;font-size:10.5px}
+  .G-fr:last-child{border-bottom:0}
+  .G-fl{width:56px;flex:0 0 auto;color:#8A9098;font-size:9px;letter-spacing:.07em;
+    text-transform:uppercase;font-weight:640;padding-top:1px}
+  .G-fv{font-weight:560}
+  .G-fv.ink{color:#1B3A6B;font-weight:660}
+  .G-note{border-left:2px solid #1B3A6B;padding:6px 0 6px 9px;margin:12px 0;
+    font-size:10.5px;color:#5A6069;font-style:italic}
+  .G-act{display:block;width:100%;text-align:left;padding:10px 12px;background:#1B3A6B;color:#fff;
+    border:0;font:inherit;font-size:12.5px;font-weight:620;cursor:pointer;margin-top:4px}
+  .G-act.s{background:#fff;color:#1F2328;border:1px solid #DDDDD7}
+  .G-kb{margin-left:auto;font-size:9px;opacity:.65;font-family:ui-monospace,Menlo,monospace}
+
+  /* ══════════════════ 3 · VIDRO — o ambiente ══════════════════
+     Uma superfície contínua. Sem abas, sem chrome. Profundidade em vez de
+     bordas. O app antecipa: sugere a ação provável no horário. */
+  .V{color:#F5F5F7;font-family:-apple-system,"SF Pro Display",system-ui,sans-serif;
+    background:radial-gradient(130% 62% at 20% -6%,#3B2C63 0%,transparent 56%),
+               radial-gradient(110% 54% at 88% 22%,#0F4A63 0%,transparent 48%),#060609}
+  .V .bar{color:#F5F5F7}
+  .V-sc{height:100%;overflow-y:auto;padding-bottom:22px}
+  /* saudação contextual: o app sabe a hora e o hábito */
+  .V-gr{padding:16px 22px 0}
+  .V-hi{font-size:13px;color:rgba(235,235,245,.5);letter-spacing:-.01em}
+  .V-h1{font-size:33px;font-weight:700;letter-spacing:-.038em;margin:2px 0 0;line-height:1.06}
+  /* cartão de sugestão: a feature própria do Vidro */
+  .V-sug{margin:18px 18px 0;border-radius:22px;padding:17px 18px;position:relative;overflow:hidden;
+    background:linear-gradient(150deg,rgba(120,90,220,.30),rgba(20,90,140,.22));
+    border:.5px solid rgba(255,255,255,.14);backdrop-filter:blur(30px);cursor:pointer}
+  .V-sl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(235,235,245,.6);font-weight:600}
+  .V-st{font-size:19px;font-weight:640;letter-spacing:-.026em;margin:5px 0 3px}
+  .V-ss{font-size:13px;color:rgba(235,235,245,.62);letter-spacing:-.008em}
+  .V-go{position:absolute;right:16px;bottom:15px;width:32px;height:32px;border-radius:999px;
+    background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:15px}
+  .V-hdr{font-size:12.5px;color:rgba(235,235,245,.5);padding:22px 22px 8px;font-weight:590;letter-spacing:-.005em}
+  .V-stack{padding:0 18px;display:flex;flex-direction:column;gap:10px}
+  .V-cd{border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:13px;
+    background:rgba(118,118,128,.18);border:.5px solid rgba(255,255,255,.10);backdrop-filter:blur(26px);cursor:pointer}
+  .V-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:0 0 auto;font-size:16px}
+  .V-n{font-size:16px;font-weight:560;letter-spacing:-.018em}
+  .V-m{font-size:13px;color:rgba(235,235,245,.52);letter-spacing:-.006em}
+  .V-ch{margin-left:auto;color:rgba(235,235,245,.3);font-size:17px}
+  /* fila de apps: rolagem horizontal, sem grade — ambiente é fluido */
+  .V-rail{display:flex;gap:11px;padding:2px 18px 4px;overflow-x:auto}
+  .V-app{width:88px;flex:0 0 auto}
+  .V-aa{height:88px;border-radius:19px;display:grid;place-items:center;font-size:26px;
+    border:.5px solid rgba(255,255,255,.10)}
+  .V-an{font-size:11.5px;margin-top:6px;color:rgba(235,235,245,.72);text-align:center;letter-spacing:-.005em}
+
+  /* ══════════════════ 4 · ÂMBAR — a sala ══════════════════
+     Quase sem texto. A sala ocupa a tela e você toca numa tela para assumi-la.
+     A luz é a linguagem: o que está aceso, está vivo. */
+  .A{background:#0B0806;color:#F7EFE3;font-family:system-ui,sans-serif}
+  .A .bar{color:#5F5548}
+  .A-hl{position:absolute;left:50%;top:-26%;width:160%;aspect-ratio:1;transform:translateX(-50%);
+    pointer-events:none;background:radial-gradient(circle,rgba(255,158,69,.17),rgba(255,158,69,.045) 34%,transparent 60%)}
+  .A-hd{padding:7px 18px 0;display:flex;align-items:center;gap:7px;position:relative;z-index:3}
+  .A-wm{font-size:9px;letter-spacing:.32em;text-transform:uppercase;font-weight:700;color:#FF9E45}
+  .A-ms{margin-left:auto;font-size:10px;color:#A2937F}
+  .A-ms b{color:#F7EFE3;font-weight:600}
+  /* a sala domina: 60% da tela é o mapa */
+  .A-room{position:relative;z-index:3;padding:10px 14px 0;height:376px}
+  .A-room svg{width:100%;height:100%;overflow:visible}
+  .A-cap{text-align:center;padding:2px 24px 0;position:relative;z-index:3}
+  .A-ct{font-size:17px;font-weight:600;letter-spacing:-.022em}
+  .A-cs{font-size:11.5px;color:#A2937F;margin-top:2px}
+  .A-cut{clip-path:polygon(0 0,calc(100% - 11px) 0,100% 11px,100% 100%,0 100%)}
+  .A-act{margin:16px 18px 0;padding:14px 16px;display:flex;align-items:center;gap:10px;
+    background:linear-gradient(102deg,#FF9E45,#E8801F);color:#1A0F04;position:relative;z-index:3;cursor:pointer}
+  .A-at{font-size:14px;font-weight:640;letter-spacing:-.014em}
+  .A-as{font-size:10.5px;color:rgba(26,15,4,.62)}
+
+  footer{border-top:1px solid var(--ln);padding:36px 0 74px;color:var(--sf);font-size:14.5px}
+  footer p{max-width:70ch;margin:0 0 12px} footer b{color:var(--ink)}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="w">
+  <header>
+    <span class="eb">VibeArtemis · quatro teses</span>
+    <h1>Cada um por um caminho</h1>
+    <p class="ld">
+      Antes eu tinha dado a mesma tela quatro cores. Agora cada identidade decide sozinha
+      o que mostrar, para quem, e o que o app faz de especial. As telas não se parecem
+      porque as perguntas não são as mesmas.
+    </p>
+  </header>
+</div>
+
+<!-- ═══════════════════════════ SINAL ═══════════════════════════ -->
+<section><div class="w">
+  <div class="sh"><span class="sn">Sinal</span><span class="stg" style="background:#0E7A73">Instrumento</span></div>
+  <p class="sq">“Não me diga que está bom. Me mostre o número.”</p>
+
+  <div class="cols">
+    <div class="ph S">
+      <div class="bar"><span class="S-tc">21:04:38:12</span><span>REC ▮▮▮ 84%</span></div>
+      <div class="sg">
+        <div class="S-rail"></div>
+        <div class="S-in">
+          <div class="S-hd">
+            <svg width="12" height="8" viewBox="0 0 13 9" fill="none"><path d="M1 8V1M12 8V1M1 4.5h11" stroke="#1FB8AE" stroke-width="1.2"/></svg>
+            <span class="S-wm">VIBEARTEMIS</span><span class="S-st">LOCK</span>
+          </div>
+
+          <div class="S-main">
+            <div class="S-lb">RTT · JANELA 60S</div>
+            <div class="S-big">
+              <span class="S-nm">18</span><span class="S-un">ms</span>
+              <span class="S-dl">−3 ▼</span>
+            </div>
+            <div class="S-scope">
+              <div class="S-gl"></div>
+              <svg viewBox="0 0 280 56" preserveAspectRatio="none">
+                <path d="M0 34 L14 30 L28 36 L42 22 L56 31 L70 26 L84 40 L98 24 L112 33 L126 18 L140 29 L154 35 L168 21 L182 30 L196 27 L210 38 L224 23 L238 31 L252 25 L266 33 L280 20"
+                      stroke="#1FB8AE" stroke-width="1.3" fill="none" stroke-linejoin="round"/>
+                <path d="M0 28h280" stroke="#2C3A42" stroke-width=".8" stroke-dasharray="3 4"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="S-sec">SAÍDAS · 3</div>
+          <div class="S-ch">
+            <div><div class="S-cn">S8 Ultra</div><div class="S-cm">2960×1848 · 120.00 Hz</div></div>
+            <span class="S-lv"><i style="width:82%"></i></span><span class="S-cv">18ms</span>
+          </div>
+          <div class="S-ch">
+            <div><div class="S-cn">Dell U2723</div><div class="S-cm">2560×1440 · 165.00 Hz</div></div>
+            <span class="S-lv"><i style="width:0"></i></span><span class="S-cv o">LOCAL</span>
+          </div>
+          <div class="S-ch">
+            <div><div class="S-cn">Este aparelho</div><div class="S-cm">2340×1080 · 120.00 Hz</div></div>
+            <span class="S-lv"><i style="width:0"></i></span><span class="S-cv o">IDLE</span>
+          </div>
+
+          <div class="S-sec">CODEC</div>
+          <div class="S-ch"><div class="S-cn">HEVC Main10</div><span class="S-cv" style="margin-left:auto">42.4</span></div>
+          <div class="S-ch"><div class="S-cn">Quedas · 5min</div><span class="S-cv o" style="margin-left:auto">0</span></div>
+          <div class="S-ch"><div class="S-cn">Jitter p99</div><span class="S-cv" style="margin-left:auto">6ms</span></div>
+
+          <div class="S-btn p"><span class="S-bt">ATIVAR SAÍDA</span><span style="margin-left:auto">▶</span></div>
+          <div class="S-btn"><span class="S-bt" style="color:#1FB8AE">CAPTURAR 30S</span><span style="margin-left:auto;color:#1FB8AE">●</span></div>
+          <div style="height:14px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info">
+      <div class="blk"><div class="bt">Para quem</div>
+        <p class="bd">Quem abre o app já sabendo o que quer conferir. Troubleshooting, ajuste fino, prova de que a rede aguenta.</p></div>
+      <div class="blk"><div class="bt">Feature própria</div>
+        <p class="bd"><b>Osciloscópio de latência e captura de 30 s.</b> Traço contínuo com linha de referência, e um botão que grava a janela para você comparar antes e depois de mexer no roteador. Nenhuma outra identidade tem — nem faria sentido ter.</p></div>
+
+      <div class="why">
+        <div><b>Sem cards.</b> Card é para conteúdo que respira. Instrumento organiza em canais: linha, leitura, nível. A tela cabe 12 informações onde as outras cabem 4.</div>
+        <div><b>Timecode no topo.</b> <span class="mono">21:04:38:12</span> — horas, minutos, segundos, frames. É como equipamento de vídeo marca tempo, e diz na primeira olhada de que mundo o app vem.</div>
+        <div><b>Delta, não só valor.</b> <span class="mono">18 ms −3 ▼</span>. Um número sozinho não tem opinião; com a tendência, tem.</div>
+        <div><b>Régua na moldura.</b> Instrumento mede também a si mesmo. A escala não é ilustração, é a borda da tela.</div>
+        <div><b>Mono em tudo, inclusive títulos.</b> As outras usam mono só em número. Aqui a fonte é a voz — nada aqui é prosa.</div>
+        <div><b>Frequência com duas casas.</b> <span class="mono">120.00 Hz</span>. Precisão desnecessária é exatamente o ponto: instrumentos não arredondam.</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ═══════════════════════════ GRAFITE ═══════════════════════════ -->
+<section><div class="w">
+  <div class="sh"><span class="sn">Grafite</span><span class="stg" style="background:#1B3A6B">Documento</span></div>
+  <p class="sq">“Minha configuração de trabalho é um arquivo que eu abro, não algo que eu monto toda vez.”</p>
+
+  <div class="cols">
+    <div class="ph G">
+      <div class="bar"><span class="mono">21:04</span><span class="mono">▮▮▮ 84%</span></div>
+      <div class="sg"><div class="G-doc">
+        <div class="G-idx">
+          <div class="G-ii on"><b>1.0</b>Fichas</div>
+          <div class="G-ii"><b>2.0</b>Hosts</div>
+          <div class="G-ii"><b>3.0</b>Apps</div>
+          <div class="G-ii"><b>4.0</b>Rede</div>
+          <div class="G-ii"><b>5.0</b>Ajustes</div>
+        </div>
+        <div class="G-bd">
+          <div class="G-num">1.0 · FICHAS DE SESSÃO</div>
+          <h2 class="G-t1">Suas configurações</h2>
+          <div class="G-sub">Três fichas salvas · PC-RAFAEL</div>
+
+          <div class="G-fc">
+            <div class="G-fh"><span class="G-fn">Trabalho</span><span class="G-fk">⌘1</span></div>
+            <div class="G-fr"><span class="G-fl">Papel</span><span class="G-fv ink">Monitor remoto</span></div>
+            <div class="G-fr"><span class="G-fl">Posição</span><span class="G-fv">Acima do principal</span></div>
+            <div class="G-fr"><span class="G-fl">Modo</span><span class="G-fv">2340×1080 · 120 Hz</span></div>
+            <div class="G-fr"><span class="G-fl">Teclado</span><span class="G-fv">Texto em bloco</span></div>
+          </div>
+
+          <div class="G-fc">
+            <div class="G-fh"><span class="G-fn">Jogo na TV</span><span class="G-fk">⌘2</span></div>
+            <div class="G-fr"><span class="G-fl">Papel</span><span class="G-fv">Sessão principal</span></div>
+            <div class="G-fr"><span class="G-fl">Modo</span><span class="G-fv">3840×2160 · 60 Hz</span></div>
+            <div class="G-fr"><span class="G-fl">Controle</span><span class="G-fv">DualSense</span></div>
+          </div>
+
+          <div class="G-fc">
+            <div class="G-fh"><span class="G-fn">Leitura</span><span class="G-fk">⌘3</span></div>
+            <div class="G-fr"><span class="G-fl">Papel</span><span class="G-fv">Só entrada</span></div>
+            <div class="G-fr"><span class="G-fl">Vídeo</span><span class="G-fv">Desligado</span></div>
+          </div>
+
+          <div class="G-note">Fichas guardam papel, posição e preferências juntas. Abrir uma aplica tudo de uma vez.</div>
+
+          <button class="G-act" style="display:flex;align-items:center">Abrir “Trabalho”<span class="G-kb">⌘1</span></button>
+          <button class="G-act s" style="display:flex;align-items:center">Nova ficha<span class="G-kb">⌘N</span></button>
+          <div style="height:14px"></div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="info">
+      <div class="blk"><div class="bt">Para quem</div>
+        <p class="bd">Quem usa o tablet como estação de trabalho e alterna entre modos de uso ao longo do dia. Provavelmente com teclado acoplado.</p></div>
+      <div class="blk"><div class="bt">Feature própria</div>
+        <p class="bd"><b>Fichas de sessão.</b> Papel, posição, modo de vídeo e preferências de teclado salvos como um documento nomeado. Você abre “Trabalho” e tudo é aplicado — em vez de reconfigurar. Com atalho de teclado, porque o teclado está ali.</p></div>
+
+      <div class="why">
+        <div><b>Serifa nos títulos.</b> Nenhum app de streaming usa serifa. Documento técnico usa. É a decisão mais arriscada das quatro e a que mais distingue à primeira vista.</div>
+        <div><b>Sumário numerado à esquerda.</b> <span class="mono">1.0, 2.0, 3.0</span> — navegação de documento, não abas de app. Você sempre sabe em que seção está.</div>
+        <div><b>Atalhos de teclado visíveis.</b> <span class="mono">⌘1</span> impresso na ficha. Quem usa com teclado descobre sozinho; quem não usa, ignora.</div>
+        <div><b>Papel levemente quente.</b> <span class="mono">#FBFBF9</span>, não branco puro. Branco de tela cansa; papel tem tom.</div>
+        <div><b>Nota em itálico com barra.</b> A margem de anotação do desenho técnico, usada para explicar sem virar tooltip.</div>
+        <div><b>Zero sombra.</b> Documento não flutua. Hierarquia por régua e peso, nunca por elevação.</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ═══════════════════════════ VIDRO ═══════════════════════════ -->
+<section><div class="w">
+  <div class="sh"><span class="sn">Vidro</span><span class="stg" style="background:#0A84FF">Ambiente</span></div>
+  <p class="sq">“Só quero que funcione quando eu pego o aparelho.”</p>
+
+  <div class="cols">
+    <div class="ph V">
+      <div class="bar"><span class="mono">21:04</span><span class="mono">▮▮▮ 84%</span></div>
+      <div class="sg"><div class="V-sc">
+        <div class="V-gr">
+          <div class="V-hi">Boa noite</div>
+          <h2 class="V-h1">Seu PC está<br>acordado</h2>
+        </div>
+
+        <div class="V-sug">
+          <div class="V-sl">Sugestão</div>
+          <div class="V-st">Assumir como monitor</div>
+          <div class="V-ss">Você faz isso quase toda noite por volta desta hora.</div>
+          <div class="V-go">›</div>
+        </div>
+
+        <div class="V-hdr">Continuar</div>
+        <div class="V-stack">
+          <div class="V-cd">
+            <div class="V-ic" style="background:linear-gradient(160deg,#5E5CE6,#3634A3)">🎮</div>
+            <div><div class="V-n">Steam</div><div class="V-m">Aberto há 2 h</div></div>
+            <span class="V-ch">›</span>
+          </div>
+          <div class="V-cd">
+            <div class="V-ic" style="background:linear-gradient(160deg,#30D158,#1F9E40)">🗔</div>
+            <div><div class="V-n">Área de trabalho</div><div class="V-m">Sempre disponível</div></div>
+            <span class="V-ch">›</span>
+          </div>
+        </div>
+
+        <div class="V-hdr">Seus apps</div>
+        <div class="V-rail">
+          <div class="V-app"><div class="V-aa" style="background:linear-gradient(150deg,#1B4F72,#0E2C42)">🎮</div><div class="V-an">Steam</div></div>
+          <div class="V-app"><div class="V-aa" style="background:linear-gradient(150deg,#2D5B3E,#16321F)">🗔</div><div class="V-an">Desktop</div></div>
+          <div class="V-app"><div class="V-aa" style="background:linear-gradient(150deg,#4A2E56,#28162F)">🕹</div><div class="V-an">Retro</div></div>
+          <div class="V-app"><div class="V-aa" style="background:linear-gradient(150deg,#5A3A1E,#2E1C0D)">⏺</div><div class="V-an">OBS</div></div>
+        </div>
+
+        <div class="V-hdr">Em casa</div>
+        <div class="V-stack">
+          <div class="V-cd">
+            <div class="V-ic" style="background:linear-gradient(160deg,#48484A,#2C2C2E)">💻</div>
+            <div><div class="V-n">Notebook</div><div class="V-m">Dormindo</div></div>
+            <span class="V-ch">›</span>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="info">
+      <div class="blk"><div class="bt">Para quem</div>
+        <p class="bd">Quem não quer pensar no app. Pega o aparelho, toca uma vez, está dentro. Nenhuma configuração à vista.</p></div>
+      <div class="blk"><div class="bt">Feature própria</div>
+        <p class="bd"><b>Antecipação.</b> O app aprende horário e hábito e sugere a ação provável no topo — “você faz isso quase toda noite por volta desta hora”. As outras esperam você escolher; esta chuta primeiro, e acerta.</p></div>
+
+      <div class="why">
+        <div><b>Saudação, não título.</b> “Boa noite / Seu PC está acordado” em vez de “Hosts”. O app fala com você, não te apresenta um inventário.</div>
+        <div><b>Sem abas, sem barra.</b> Uma superfície contínua que rola. Abas dividem; ambiente é um lugar só.</div>
+        <div><b>Fila horizontal de apps.</b> Grade é catálogo, fila é vitrine. Quem só quer os três de sempre nunca precisa rolar.</div>
+        <div><b>Nenhum número técnico na tela inicial.</b> Latência, resolução e taxa não aparecem — é a decisão mais radical desta identidade, e a que mais a separa do Sinal.</div>
+        <div><b>Raios grandes e desiguais.</b> <span class="mono">22px</span> na sugestão, <span class="mono">18px</span> nos cartões, <span class="mono">19px</span> nos apps. Hierarquia por suavidade, um recurso que só funciona quando há profundidade.</div>
+        <div><b>Cor vem do fundo, não dos elementos.</b> Os dois halos coloridos são a única fonte de cor; tudo por cima é vidro neutro.</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ═══════════════════════════ ÂMBAR ═══════════════════════════ -->
+<section><div class="w">
+  <div class="sh"><span class="sn">Âmbar</span><span class="stg" style="background:#E8801F">Sala</span></div>
+  <p class="sq">“Meu PC é um lugar com telas. Quero ver o lugar.”</p>
+
+  <div class="cols">
+    <div class="ph A">
+      <div class="bar"><span class="mono">21:04</span><span class="mono">▮▮▮ 84%</span></div>
+      <div class="sg">
+        <div class="A-hl"></div>
+        <div class="A-hd">
+          <svg width="14" height="10" viewBox="0 0 15 11" fill="none"><path d="M1 10V4a1.6 1.6 0 0 1 3.2 0v2.2M14 10V4a1.6 1.6 0 0 0-3.2 0v2.2M4.2 6.2c0-1.9 1.2-3 3.3-3s3.3 1.1 3.3 3" stroke="#FF9E45" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <span class="A-wm">Vibeartemis</span>
+          <span class="A-ms mono"><b>18</b> ms</span>
+        </div>
+
+        <div class="A-room">
+          <svg viewBox="0 0 268 376" fill="none">
+            <defs>
+              <linearGradient id="lit" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#FF9E45" stop-opacity=".30"/><stop offset="1" stop-color="#FF9E45" stop-opacity=".07"/></linearGradient>
+              <radialGradient id="sp" cx="50%" cy="50%"><stop offset="0" stop-color="#FF9E45" stop-opacity=".18"/><stop offset="1" stop-color="#FF9E45" stop-opacity="0"/></radialGradient>
+            </defs>
+
+            <ellipse cx="134" cy="196" rx="150" ry="120" fill="url(#sp)"/>
+
+            <!-- S8, aceso, acima -->
+            <rect x="52" y="14" width="164" height="70" rx="3" fill="url(#lit)" stroke="#FF9E45" stroke-width="1.6"/>
+            <text x="134" y="47" text-anchor="middle" fill="#FF9E45" font-size="13" font-weight="600" font-family="system-ui">S8 Ultra</text>
+            <text x="134" y="64" text-anchor="middle" fill="#C98A50" font-size="10" font-family="ui-monospace,Menlo,monospace">EM USO</text>
+
+            <!-- monitor físico, apagado, centro -->
+            <rect x="24" y="106" width="220" height="122" rx="3" fill="#141009" stroke="#3D3226" stroke-width="1.6"/>
+            <text x="134" y="160" text-anchor="middle" fill="#8A7B68" font-size="14" font-weight="600" font-family="system-ui">Dell 27"</text>
+            <text x="134" y="180" text-anchor="middle" fill="#5F5548" font-size="10" font-family="ui-monospace,Menlo,monospace">PRINCIPAL</text>
+
+            <!-- este aparelho, pronto, abaixo -->
+            <rect x="86" y="250" width="96" height="112" rx="3" fill="none" stroke="#FF9E45" stroke-width="1.6" stroke-dasharray="6 5"/>
+            <text x="134" y="300" text-anchor="middle" fill="#FF9E45" font-size="12" font-weight="600" font-family="system-ui">Você</text>
+            <text x="134" y="318" text-anchor="middle" fill="#C98A50" font-size="9.5" font-family="ui-monospace,Menlo,monospace">TOQUE PARA</text>
+            <text x="134" y="331" text-anchor="middle" fill="#C98A50" font-size="9.5" font-family="ui-monospace,Menlo,monospace">ASSUMIR</text>
+
+            <path d="M134 84v22M134 228v22" stroke="#FF9E45" stroke-width="1.2" stroke-dasharray="3 4" opacity=".5"/>
+          </svg>
+        </div>
+
+        <div class="A-cap">
+          <div class="A-ct">PC-RAFAEL</div>
+          <div class="A-cs">Duas telas acesas · uma disponível</div>
+        </div>
+
+        <div class="A-act A-cut">
+          <div><div class="A-at">Acender esta tela</div><div class="A-as">Vira o monitor de baixo</div></div>
+          <span style="margin-left:auto;font-size:11px;opacity:.5">↵</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info">
+      <div class="blk"><div class="bt">Para quem</div>
+        <p class="bd">Quem tem mais de uma tela e pensa espacialmente. A pergunta que responde é “onde essa tela entra”, não “qual PC”.</p></div>
+      <div class="blk"><div class="bt">Feature própria</div>
+        <p class="bd"><b>A sala como controle direto.</b> O mapa não ilustra — é a interface. Você toca na tela que quer assumir, arrasta para reposicionar, e vê de relance quais estão acesas. Nenhuma lista em lugar nenhum.</p></div>
+
+      <div class="why">
+        <div><b>A sala ocupa 60% da tela.</b> As outras identidades dariam esse espaço a conteúdo; aqui o espaço <em>é</em> o conteúdo.</div>
+        <div><b>Quase sem texto.</b> Três rótulos e uma legenda. Se a sala precisa de explicação, o desenho falhou.</div>
+        <div><b>Tracejado significa disponível.</b> Contorno cheio é tela em uso, tracejado é convite. Estado pela forma da linha, não por cor de etiqueta.</div>
+        <div><b>Latência discreta no topo.</b> <span class="mono">18 ms</span> em corpo pequeno. O oposto do Sinal, de propósito — aqui o dado existe mas não governa.</div>
+        <div><b>Luz derramada no chão.</b> A elipse sob as telas é a única sombra do sistema, e ela vem de baixo, como luz de tela numa sala escura.</div>
+        <div><b>Chanfro só na ação primária.</b> Uma por tela. Onde o Sinal usa densidade e o Grafite usa régua, aqui a hierarquia é: tem chanfro, é a coisa a fazer.</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="w">
+  <p>
+    <b>Nenhuma destas telas existe nas outras identidades.</b> O Sinal não tem sala. O
+    Grafite não tem sugestão. O Vidro não mostra um número técnico sequer. O Âmbar não tem
+    lista. Se duas parecerem intercambiáveis, uma delas está errada.
+  </p>
+  <p>
+    O que decide não é qual é mais bonita, e sim qual pergunta é a sua quando você pega o
+    aparelho: <b>“está bom?”</b> (Sinal), <b>“abre meu setup”</b> (Grafite),
+    <b>“me põe dentro”</b> (Vidro) ou <b>“onde essa tela entra”</b> (Âmbar).
+  </p>
+</div></footer>
