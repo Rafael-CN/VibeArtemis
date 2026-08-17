@@ -44,22 +44,21 @@ jobs:
         with:
           node-version: '22'
 
-      # Rápido e sem custo de Gradle: se a fronteira JNI estiver quebrada, falha
-      # em segundos em vez de depois de compilar o NDK inteiro.
-      - name: Integridade da fronteira JNI
-        run: node tools/codemap/jni-check.mjs
-
-      - name: Mapas de código atualizados
-        run: node tools/codemap/codemap.mjs --check
-
+      # Testa os próprios hooks. Fica fora do validate.mjs porque valida a
+      # infraestrutura de agentes, não o app.
       - name: Hooks
         run: node tools/test-hooks.mjs
 
-      - name: Build (debug)
-        run: ./gradlew :app:assembleNonRoot_gameDebug --console=plain
-
-      - name: Testes unitários
-        run: ./gradlew :app:testNonRoot_gameDebugUnitTest --console=plain
+      # O gate inteiro num passo só: mapas, fronteira JNI, build e testes, na ordem
+      # em que falham mais barato primeiro. É o MESMO comando que roda na máquina do
+      # dev e no hook de Stop — ter dois caminhos diferentes é como o gate local e o
+      # do CI divergem até alguém dizer "mas passa aqui".
+      #
+      # É também o que distingue falha nova das 5 que já vinham quebradas do upstream
+      # (tools/test-baseline.json). Chamar o Gradle direto aqui reprovaria todo commit
+      # por dívida herdada, e em uma semana ninguém mais olharia para o CI.
+      - name: Gate de qualidade
+        run: node tools/validate.mjs
 
       - name: Lint
         run: ./gradlew :app:lintNonRoot_gameDebug --console=plain

@@ -53,13 +53,11 @@ jobs:
         with:
           node-version: '22'
 
-      # Publicar algo com a fronteira JNI quebrada produz um APK que crasha em
-      # runtime sem erro de compilação. Barato de checar, caro de descobrir depois.
-      - name: Integridade da fronteira JNI
-        run: node tools/codemap/jni-check.mjs
-
-      - name: Testes unitários
-        run: ./gradlew :app:testNonRoot_gameDebugUnitTest --console=plain
+      # Publicar com a fronteira JNI quebrada produz um APK que crasha em runtime sem
+      # nenhum erro de compilação. O mesmo gate do CI e da máquina do dev, para não
+      # existir um caminho de publicação com verificação mais frouxa que o normal.
+      - name: Gate de qualidade
+        run: node tools/validate.mjs
 
       - name: Preparar keystore
         id: keystore
